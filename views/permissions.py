@@ -6,7 +6,7 @@ import cbpos
 
 from cbpos.mod.auth.models.permission import Permission, MenuRestriction
 
-from cbpos.mod.base.pages import FormPage
+from cbpos.mod.base.views import FormPage
 
 class PermissionsPage(FormPage):
     itemClass = Permission

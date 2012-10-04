@@ -52,28 +52,12 @@ class LoginDialog(QtGui.QWidget):
         username = self.user.currentText()
         password = self.password.text()
         
-        session = cbpos.database.session()
-        try:
-            u = session.query(User).filter(User.username == username).one()
-        except exc.NoResultFound, exc.MultipleResultsFound:
-            QtGui.QMessageBox.information(self, 'Login',
-                            "Invalid username/password.", QtGui.QMessageBox.Ok)
-            user.current = None
+        if user.login(username, password):
+            self.close()
+            cbpos.ui.show_default()
         else:
-            if u.login(password):
-                user.current = u
-                if not user.current.super:
-                    # Filter menu items to display according to permissions
-                    restrictions = [(mr.root, mr.item) for mr in user.current.menu_restrictions] 
-                    for root in cbpos.menu.main.items:
-                        for item in root.children:
-                            item.enabled = ((root.label, item.label) in restrictions)
-                self.close()
-                cbpos.ui.show_default()
-            else:
-                QtGui.QMessageBox.information(self, 'Login',
-                                "Invalid username/password.", QtGui.QMessageBox.Ok)
-                user.current = None
+            QtGui.QMessageBox.information(self, 'Login',
+                "Invalid username/password.", QtGui.QMessageBox.Ok)
     
     def onExitButton(self):
         user.current = None

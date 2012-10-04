@@ -6,7 +6,7 @@ import cbpos.mod.auth.models.user as user
 from cbpos.mod.auth.models.role import Role
 from cbpos.mod.auth.models.permission import Permission
 
-from cbpos.mod.base.pages import FormPage
+from cbpos.mod.base.views import FormPage
 
 class RolesPage(FormPage):
     itemClass = Role

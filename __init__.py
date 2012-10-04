@@ -9,15 +9,11 @@ class ModuleLoader(BaseModuleLoader):
     name = 'Authentication Support'
 
     def load(self):
-        from cbpos.mod.auth.models.permission import Permission, MenuRestriction
-        from cbpos.mod.auth.models.role import Role
-        from cbpos.mod.auth.models.user import User
+        from cbpos.mod.auth.models import Permission, MenuRestriction, Role, User
         return [Permission, MenuRestriction, Role, User]
 
     def test(self):
-        from cbpos.mod.auth.models.permission import Permission, MenuRestriction
-        from cbpos.mod.auth.models.role import Role
-        from cbpos.mod.auth.models.user import User
+        from cbpos.mod.auth.models import Permission, MenuRestriction, Role, User
     
         mr = lambda root, item: MenuRestriction(root=root, item=item)
     
@@ -53,11 +49,7 @@ class ModuleLoader(BaseModuleLoader):
         session.commit()
 
     def menu(self):
-        from cbpos.mod.auth.pages import UsersPage
-        from cbpos.mod.auth.pages import RolesPage
-        from cbpos.mod.auth.pages import PermissionsPage
-        
-        from cbpos.mod.auth.pages import IndividualUserPage
+        from cbpos.mod.auth.views import UsersPage, RolesPage, PermissionsPage, IndividualUserPage
         
         return [[{'label': 'Users', 'rel': -2, 'priority': 3, 'image': self.res('images/menu-root-users.png')}],
                 [{'parent': 'Users', 'label': 'Users', 'page': UsersPage, 'image': self.res('images/menu-users.png')},
@@ -71,9 +63,10 @@ class ModuleLoader(BaseModuleLoader):
 
     def do_load_login(self):
         from PySide import QtGui
-        from .dialogs import LoginDialog
+        from cbpos.mod.auth.views.dialogs import LoginDialog
+        # TODO: change this!
         import cbpos.mod.auth.models.user as user
-        from cbpos.mod.auth.models.user import User
+        from cbpos.mod.auth.models import User
         
         session = cbpos.database.session()
         user_count = session.query(User).count()
@@ -95,5 +88,5 @@ Password: _superuser_
             return True
 
     def config_panels(self):
-        from cbpos.mod.auth.pages import UserConfigPage 
+        from cbpos.mod.auth.views import UserConfigPage 
         return [UserConfigPage]
