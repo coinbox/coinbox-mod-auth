@@ -4,34 +4,22 @@ from sqlalchemy.orm import exc
 
 import cbpos
 
-from cbpos.mod.auth.models.permission import Permission, MenuRestriction
+from cbpos.mod.auth.controllers import PermissionsFormController
+from cbpos.mod.auth.models import Permission, MenuRestriction
 
 from cbpos.mod.base.views import FormPage
 
 class PermissionsPage(FormPage):
-    itemClass = Permission
-    def fields(self):
+    controller = PermissionsFormController()
+    
+    def widgets(self):
         menu_restrictions = QtGui.QTreeWidget()
         menu_restrictions.setHeaderHidden(True)
         
-        return [("name", "Name", QtGui.QLineEdit(), ""),
-                ("description", "Description", QtGui.QTextEdit(), ""),
-                ("menu_restrictions", "Menu Restrictions", menu_restrictions, [])
-                ]
-    
-    def items(self):
-        session = cbpos.database.session()
-        items = session.query(Permission.display, Permission).all()
-        return items
-    
-    def canDeleteItem(self, item):
-        return len(item.roles) == 0
-    
-    def canEditItem(self, item):
-        return True
-    
-    def canAddItem(self):
-        return True
+        return (("name", QtGui.QLineEdit()),
+                ("description", QtGui.QTextEdit()),
+                ("menu_restrictions", menu_restrictions)
+                )
     
     def getDataFromControl(self, field):
         if field == 'name':
@@ -69,6 +57,3 @@ class PermissionsPage(FormPage):
                         child.setCheckState(0, QtCore.Qt.Checked)
                     else:
                         child.setCheckState(0, QtCore.Qt.Unchecked)
-    
-    def getDataFromItem(self, field, item):
-        return getattr(item, field)

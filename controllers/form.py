@@ -1,0 +1,97 @@
+import cbpos
+
+from cbpos.mod.auth.models import User, Role, Permission
+
+from cbpos.mod.base.controllers import FormController
+
+class UsersFormController(FormController):
+    cls = User
+    
+    def fields(self):
+        return {"username": (cbpos.tr.auth._("Username"), ""),
+                "role": (cbpos.tr.auth._("Role"), None),
+                "permissions": (cbpos.tr.auth._("Permissions"), []),
+                "hidden": (cbpos.tr.auth._("Show in Login Box"), False),
+                "password_check": ("", False),
+                "password1": (cbpos.tr.auth._("Password"), ""),
+                "password2": (cbpos.tr.auth._("Confirm Password"), "")
+                }
+    
+    def items(self):
+        session = cbpos.database.session()
+        items = session.query(User.display, User).all()
+        return items
+    
+    def canDeleteItem(self, item):
+        from cbpos.mod.auth.controllers import user
+        return user.current != item
+    
+    def canEditItem(self, item):
+        from cbpos.mod.auth.controllers import user
+        return user.current != item
+    
+    def canAddItem(self):
+        return True
+    
+    def getDataFromItem(self, field, item):
+        if field in ('username', 'role', 'hidden'):
+            return getattr(item, field)
+        elif field == 'permissions':
+            return item.role.permissions if item.role is not None else []
+        elif field in ('password1', 'password2'):
+            return ""
+        elif field == 'password_check':
+            return False
+
+class RolesFormController(FormController):
+    cls = Role
+    
+    def fields(self):
+        return {"name": (cbpos.tr.auth._("Name"), ""),
+                "permissions": (cbpos.tr.auth._("Permissions"), []),
+                }
+    
+    def items(self):
+        session = cbpos.database.session()
+        items = session.query(Role.display, Role).all()
+        return items
+    
+    def canDeleteItem(self, item):
+        from cbpos.mod.auth.controllers import user
+        return user.current.role != item
+    
+    def canEditItem(self, item):
+        from cbpos.mod.auth.controllers import user
+        return user.current.role != item
+    
+    def canAddItem(self):
+        return True
+
+    def getDataFromItem(self, field, item):
+        return getattr(item, field)
+
+class PermissionsFormController(FormController):
+    cls = Permission
+    
+    def fields(self):
+        return {"name": (cbpos.tr.auth._("Name"), ""),
+                "description": (cbpos.tr.auth._("Description"), ""),
+                "menu_restrictions": (cbpos.tr.auth._("Menu Restrictions"), []),
+                }
+    
+    def items(self):
+        session = cbpos.database.session()
+        items = session.query(Permission.display, Permission).all()
+        return items
+    
+    def canDeleteItem(self, item):
+        return len(item.roles) == 0
+    
+    def canEditItem(self, item):
+        return True
+    
+    def canAddItem(self):
+        return True
+
+    def getDataFromItem(self, field, item):
+        return getattr(item, field)

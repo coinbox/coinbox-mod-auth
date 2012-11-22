@@ -65,7 +65,7 @@ class ModuleLoader(BaseModuleLoader):
         from PySide import QtGui
         from cbpos.mod.auth.views.dialogs import LoginDialog
         # TODO: change this!
-        import cbpos.mod.auth.models.user as user
+        from cbpos.mod.auth.controllers import user
         from cbpos.mod.auth.models import User
         
         session = cbpos.database.session()

@@ -4,7 +4,7 @@ import cbpos
 
 from sqlalchemy.orm import exc
 
-import cbpos.mod.auth.models.user as user
+from cbpos.mod.auth.controllers import user
 from cbpos.mod.auth.models import User
 
 #from pos.modules.user.windows import UserCatalog

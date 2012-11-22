@@ -2,34 +2,21 @@ from PySide import QtCore, QtGui
 
 import cbpos
 
-import cbpos.mod.auth.models.user as user
-from cbpos.mod.auth.models.role import Role
-from cbpos.mod.auth.models.permission import Permission
+from cbpos.mod.auth.controllers import RolesFormController
+from cbpos.mod.auth.models import Role, Permission
 
 from cbpos.mod.base.views import FormPage
 
 class RolesPage(FormPage):
-    itemClass = Role
-    def fields(self):
+    controller = RolesFormController()
+    
+    def widgets(self):
         permissions = QtGui.QTreeWidget()
         permissions.setHeaderHidden(True)
-        return [("name", "Name", QtGui.QLineEdit(), ""),
-                ("permissions", "Permissions", permissions, [])
-                ]
-    
-    def items(self):
-        session = cbpos.database.session()
-        items = session.query(Role.display, Role).all()
-        return items
-    
-    def canDeleteItem(self, item):
-        return user.current.role != item
-    
-    def canEditItem(self, item):
-        return user.current.role != item
-    
-    def canAddItem(self):
-        return True
+        
+        return (("name", QtGui.QLineEdit()),
+                ("permissions", permissions)
+                )
     
     def getDataFromControl(self, field):
         if field == 'name':
@@ -57,6 +44,3 @@ class RolesPage(FormPage):
                     root.setCheckState(0, QtCore.Qt.Checked)
                 else:
                     root.setCheckState(0, QtCore.Qt.Unchecked)
-    
-    def getDataFromItem(self, field, item):
-        return getattr(item, field)

@@ -2,7 +2,7 @@ from PySide import QtCore, QtGui
 
 import cbpos
 
-import cbpos.mod.auth.models.user as user
+from cbpos.mod.auth.controllers import user
 
 class IndividualUserPage(QtGui.QWidget):
     

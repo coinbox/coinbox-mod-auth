@@ -2,15 +2,15 @@ from PySide import QtGui
 
 import cbpos
 
-import cbpos.mod.auth.models.user as user
-from cbpos.mod.auth.models.user import User
-from cbpos.mod.auth.models.role import Role
+from cbpos.mod.auth.controllers import UsersFormController
+from cbpos.mod.auth.models import User, Role
 
 from cbpos.mod.base.views import FormPage
 
 class UsersPage(FormPage):
-    itemClass = User
-    def fields(self):
+    controller = UsersFormController()
+    
+    def widgets(self):
         username = QtGui.QLineEdit()
         username.setEnabled(False)
         
@@ -29,14 +29,14 @@ class UsersPage(FormPage):
         password_check = QtGui.QCheckBox("Change Password")
         password_check.stateChanged.connect(self.onCheckPassword)
 
-        return [("username", "Username", username, ""),
-                ("role", "Role", role, None),
-                ("permissions", "Permissions", QtGui.QListWidget(), []),
-                ("hidden", "Show in Login Box", QtGui.QCheckBox("Is Hidden"), False),
-                ("password_check", "", password_check, False),
-                ("password1", "Password", password1, ""),
-                ("password2", "Confirm Password", password2, "")
-                ]
+        return (("username", username),
+                ("role", role),
+                ("permissions", QtGui.QListWidget()),
+                ("hidden", QtGui.QCheckBox("Is Hidden")),
+                ("password_check", password_check),
+                ("password1", password1),
+                ("password2", password2)
+                )
     
     def onCheckPassword(self):
         checked = self.f['password_check'].isChecked()
@@ -49,20 +49,6 @@ class UsersPage(FormPage):
             self.setDataOnControl('permissions', data.permissions)
         else:
             self.setDataOnControl('permissions', [])
-    
-    def items(self):
-        session = cbpos.database.session()
-        items = session.query(User.display, User).all()
-        return items
-    
-    def canDeleteItem(self, item):
-        return user.current != item
-    
-    def canEditItem(self, item):
-        return user.current != item
-    
-    def canAddItem(self):
-        return True
     
     def getDataFromControl(self, field):
         if field == 'username':
@@ -105,13 +91,3 @@ class UsersPage(FormPage):
             self.f[field].setText(data)
         elif field == 'password_check':
             self.f[field].setChecked(data)
-    
-    def getDataFromItem(self, field, item):
-        if field in ('username', 'role', 'hidden'):
-            return getattr(item, field)
-        elif field == 'permissions':
-            return item.role.permissions if item.role is not None else []
-        elif field in ('password1', 'password2'):
-            return ""
-        elif field == 'password_check':
-            return False
