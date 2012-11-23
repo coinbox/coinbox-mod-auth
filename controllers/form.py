@@ -95,3 +95,39 @@ class PermissionsFormController(FormController):
 
     def getDataFromItem(self, field, item):
         return getattr(item, field)
+
+class IndividualUserFormController(FormController):
+    cls = User
+    single = True
+    
+    def fields(self):
+        return {"username": (cbpos.tr.auth._("Username"), ""),
+                "role": (cbpos.tr.auth._("Role"), None),
+                "password_check": ("", False),
+                "password1": (cbpos.tr.auth._("Password"), ""),
+                "password2": (cbpos.tr.auth._("Confirm Password"), "")
+                }
+    
+    def item(self):
+        from cbpos.mod.auth.controllers import user
+        return user.current
+    
+    def items(self):
+        return []
+    
+    def canDeleteItem(self, item):
+        return False
+    
+    def canEditItem(self, item):
+        return True
+    
+    def canAddItem(self):
+        return False
+    
+    def getDataFromItem(self, field, item):
+        if field in ('username', 'role'):
+            return getattr(item, field)
+        elif field in ('password1', 'password2'):
+            return ""
+        elif field == 'password_check':
+            return False

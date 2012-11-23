@@ -2,74 +2,77 @@ from PySide import QtCore, QtGui
 
 import cbpos
 
-from cbpos.mod.auth.controllers import user
+from cbpos.mod.auth.controllers import IndividualUserFormController
+from cbpos.mod.auth.models import User, Role
 
-class IndividualUserPage(QtGui.QWidget):
-    
-    def __init__(self):
-        super(IndividualUserPage, self).__init__()
+from cbpos.mod.base.controllers import ValidationError
+from cbpos.mod.base.views import FormPage
 
-        self.username = QtGui.QLineEdit()
-        self.username.setReadOnly(True)
-        
-        self.role = QtGui.QLineEdit()
-        self.role.setReadOnly(True)
-        
-        self.changePassword = QtGui.QCheckBox("Change Password")
-        self.changePassword.stateChanged.connect(self.onChangePasswordCheck)
-        
-        self.password1 = QtGui.QLineEdit()
-        self.password1.setEchoMode(QtGui.QLineEdit.Password)
-        
-        self.password2 = QtGui.QLineEdit()
-        self.password2.setEchoMode(QtGui.QLineEdit.Password)
-        
-        buttonBox = QtGui.QDialogButtonBox()
-        
-        self.okBtn = buttonBox.addButton(QtGui.QDialogButtonBox.Ok)
-        self.okBtn.pressed.connect(self.onOkButton)
-        
-        self.cancelBtn = buttonBox.addButton(QtGui.QDialogButtonBox.Cancel)
-        self.cancelBtn.pressed.connect(self.onCancelButton)
-        
-        rows = [["Username", self.username],
-                ["Role", self.role],
-                ["", self.changePassword],
-                ["Password", self.password1],
-                ["Confirm Password", self.password2],
-                [buttonBox]]
-        
-        form = QtGui.QFormLayout()
-        form.setSpacing(10)
-        
-        [form.addRow(*row) for row in rows]
-        
-        self.setLayout(form)
-        
-        self.populate()
+class IndividualUserPage(FormPage):
+    controller = IndividualUserFormController()
+    single = True
     
-    def populate(self):
-        self.username.setText(user.current.username)
-        self.role.setText(user.current.role.name if user.current.role is not None else '')
-        self.changePassword.setChecked(False)
-        self.password1.setText('')
-        self.password1.setEnabled(False)
-        self.password2.setText('')
-        self.password2.setEnabled(False)
+    def widgets(self):
+        username = QtGui.QLineEdit()
+        username.setReadOnly(True)
+        
+        role = QtGui.QLineEdit()
+        role.setReadOnly(True)
+        
+        password1 = QtGui.QLineEdit()
+        password1.setEchoMode(QtGui.QLineEdit.Password)
+        password1.setEnabled(False)
+        
+        password2 = QtGui.QLineEdit()
+        password2.setEchoMode(QtGui.QLineEdit.Password)
+        password2.setEnabled(False)
+
+        password_check = QtGui.QCheckBox("Change Password")
+        password_check.stateChanged.connect(self.onCheckPassword)
+
+        return (("username", username),
+                ("role", role),
+                ("password_check", password_check),
+                ("password1", password1),
+                ("password2", password2)
+                )
     
-    def onChangePasswordCheck(self):
-        enabled = self.changePassword.isChecked()
-        self.password1.setEnabled(enabled)
-        self.password2.setEnabled(enabled)
+    def onCheckPassword(self):
+        checked = self.f['password_check'].isChecked()
+        self.f['password1'].setEnabled(checked)
+        self.f['password2'].setEnabled(checked)
     
-    def onOkButton(self):
-        if self.changePassword.isChecked():
-            if self.password1.text() != self.password2.text():
-                QtGui.QMessageBox.information(self, 'User',
-                    "Passwords do not match.", QtGui.QMessageBox.Ok)
+    def getDataFromControl(self, field):
+        if field == 'username':
+            data = self.f[field].text()
+        elif field == 'role':
+            field, data = None, None
+        elif field in ('password1', 'password2'):
+            if self.f['password_check'].isChecked():
+                password1 = self.f['password1'].text()
+                password2 = self.f['password2'].text()
+                if password1 != password2:
+                    raise ValidationError(cbpos.tr.auth._("Passwords do not match."))
+                data = password1
+                field = 'password'
             else:
-                user.current.update(password=self.password1.text())
-                self.populate()
+                field, data = None, None
+        elif field == 'password_check':
+            field, data = None, None
+        return (field, data)
     
-    def onCancelButton(self):
-        self.populate()
+    def setDataOnControl(self, field, data):
+        if field == 'username':
+            self.f[field].setText(data)
+        elif field == 'role':
+            if data == None:
+                self.f[field].setText('')
+            else:
+                self.f[field].setText(data.display) 
+        elif field == 'permissions':
+            self.f[field].clear()
+            self.f[field].addItems([i.display for i in data])
+        elif field in ('password1', 'password2'):
+            self.f[field].setText(data)
+        elif field == 'password_check':
+            self.f[field].setChecked(data)
