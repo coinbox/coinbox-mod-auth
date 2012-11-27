@@ -1,4 +1,4 @@
-from PySide import QtGui
+from PySide import QtGui, QtSvg
 
 import cbpos
 
@@ -9,38 +9,24 @@ from cbpos.mod.auth.models import User
 
 #from pos.modules.user.windows import UserCatalog
 
-class LoginDialog(QtGui.QWidget):
+from cmWidgets.cmLoginWindow import *
+
+class LoginDialog(QtSvg.QSvgWidget):
     def __init__(self):
         super(LoginDialog, self).__init__()
+        self.load("cmWidgets/images/login-background2.svg")
         self.setWindowTitle(cbpos.tr.auth._('Login'))
         
-        self.user = QtGui.QComboBox()
-        self.user.setEditable(True)
-        
-        self.password = QtGui.QLineEdit()
-        self.password.setEchoMode(QtGui.QLineEdit.Password)
-        
-        buttonBox = QtGui.QDialogButtonBox()
-        
-        self.loginBtn = buttonBox.addButton(cbpos.tr.auth._("Login"), QtGui.QDialogButtonBox.AcceptRole)
-        self.loginBtn.pressed.connect(self.onOkButton)
-        
-        self.exitBtn = buttonBox.addButton(cbpos.tr.auth._("Exit"), QtGui.QDialogButtonBox.RejectRole)
-        self.exitBtn.pressed.connect(self.onExitButton)
-        
-        form = QtGui.QFormLayout()
-        form.setSpacing(10)
-        
-        rows = [[cbpos.tr.auth._("User"), self.user],
-                [cbpos.tr.auth._("Password"), self.password],
-                [buttonBox]
-                ]
-        
-        [form.addRow(*row) for row in rows]
-         
-        self.setLayout(form)
-        
-        self.populate()
+        #MCH Login Dialog
+        self.showFullScreen() #To center the login widget on screen, and getting space to show it right.
+        self.loginWindow = cmLoginWindow(self, "cmWidgets/images/about.svg")
+        self.loginWindow.setSize(350, 350)
+        self.loginWindow.btnLogin.clicked.connect(self.onOkButton)
+        self.loginWindow.editUsername.returnPressed.connect(self.loginWindow.editPassword.setFocus)
+        self.loginWindow.editPassword.returnPressed.connect(self.onOkButton)
+        self.loginWindow.btnExit.clicked.connect(self.onExitButton)
+        #Launch login-dialog
+        QtCore.QTimer.singleShot(300, self.loginWindow.showDialog )
     
     def populate(self):
         session = cbpos.database.session()
@@ -49,15 +35,22 @@ class LoginDialog(QtGui.QWidget):
             self.user.addItem(*user)
     
     def onOkButton(self):
-        username = self.user.currentText()
-        password = self.password.text()
+        username = self.loginWindow.getUserName() #self.user.currentText()
+        password = self.loginWindow.getPassword() #self.password.text()
         
         if user.login(username, password):
-            self.close()
-            cbpos.ui.show_default()
+            self.loginWindow.hideDialog()
+            QtCore.QTimer.singleShot(1000, self.closeAll)
         else:
-            QtGui.QMessageBox.information(self, 'Login',
-                "Invalid username/password.", QtGui.QMessageBox.Ok)
+            #Jad: your text was not translated!
+            self.loginWindow.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span><span style=" font-size:14pt; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%(cbpos.tr.auth._('Invalid '),cbpos.tr.auth._('username or password.')) )
+            self.loginWindow.editPassword.setFocus()
+            self.loginWindow.editPassword.selectAll()
+
+    def closeAll(self):
+        self.close()
+        cbpos.ui.show_default()
+        #MCH Comment: Why now showing the main ui window first, then login window on top of the main (like a dialog of the main)?
     
     def onExitButton(self):
         user.current = None
