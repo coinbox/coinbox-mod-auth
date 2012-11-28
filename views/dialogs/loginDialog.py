@@ -1,4 +1,4 @@
-from PySide import QtGui, QtSvg
+from PySide import QtGui, QtSvg, QtCore
 
 import cbpos
 
@@ -9,24 +9,24 @@ from cbpos.mod.auth.models import User
 
 #from pos.modules.user.windows import UserCatalog
 
-from cmWidgets.cmLoginWindow import *
+from cbpos.mod.auth.views.dialogs.loginpanel import LoginPanel
 
 class LoginDialog(QtSvg.QSvgWidget):
     def __init__(self):
         super(LoginDialog, self).__init__()
-        self.load("cmWidgets/images/login-background2.svg")
+        self.load("app/mod/auth/views/dialogs/images/login-background2.svg")
         self.setWindowTitle(cbpos.tr.auth._('Login'))
         
-        #MCH Login Dialog
+        #Login Panel
         self.showFullScreen() #To center the login widget on screen, and getting space to show it right.
-        self.loginWindow = cmLoginWindow(self, "cmWidgets/images/about.svg")
-        self.loginWindow.setSize(350, 350)
-        self.loginWindow.btnLogin.clicked.connect(self.onOkButton)
-        self.loginWindow.editUsername.returnPressed.connect(self.loginWindow.editPassword.setFocus)
-        self.loginWindow.editPassword.returnPressed.connect(self.onOkButton)
-        self.loginWindow.btnExit.clicked.connect(self.onExitButton)
-        #Launch login-dialog
-        QtCore.QTimer.singleShot(300, self.loginWindow.showDialog )
+        self.loginPanel = LoginPanel(self, "app/mod/auth/views/dialogs/images/login.svg")
+        self.loginPanel.setSize(350, 350)
+        self.loginPanel.btnLogin.clicked.connect(self.onOkButton)
+        self.loginPanel.editUsername.returnPressed.connect(self.loginPanel.editPassword.setFocus)
+        self.loginPanel.editPassword.returnPressed.connect(self.onOkButton)
+        self.loginPanel.btnExit.clicked.connect(self.onExitButton)
+        #Launch login-panel
+        QtCore.QTimer.singleShot(300, self.loginPanel.showPanel )
     
     def populate(self):
         session = cbpos.database.session()
@@ -35,17 +35,17 @@ class LoginDialog(QtSvg.QSvgWidget):
             self.user.addItem(*user)
     
     def onOkButton(self):
-        username = self.loginWindow.getUserName() #self.user.currentText()
-        password = self.loginWindow.getPassword() #self.password.text()
+        username = self.loginPanel.getUserName() #self.user.currentText()
+        password = self.loginPanel.getPassword() #self.password.text()
         
         if user.login(username, password):
-            self.loginWindow.hideDialog()
+            self.loginPanel.hidePanel()
             QtCore.QTimer.singleShot(1000, self.closeAll)
         else:
             #Jad: your text was not translated!
-            self.loginWindow.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span><span style=" font-size:14pt; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%(cbpos.tr.auth._('Invalid '),cbpos.tr.auth._('username or password.')) )
-            self.loginWindow.editPassword.setFocus()
-            self.loginWindow.editPassword.selectAll()
+            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span><span style=" font-size:14pt; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%(cbpos.tr.auth._('Invalid '),cbpos.tr.auth._('username or password.')) )
+            self.loginPanel.editPassword.setFocus()
+            self.loginPanel.editPassword.selectAll()
 
     def closeAll(self):
         self.close()
