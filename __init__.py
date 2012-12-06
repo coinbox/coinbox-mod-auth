@@ -51,11 +51,11 @@ class ModuleLoader(BaseModuleLoader):
     def menu(self):
         from cbpos.mod.auth.views import UsersPage, RolesPage, PermissionsPage, IndividualUserPage
         
-        return [[{'label': 'Users', 'rel': -2, 'priority': 3, 'image': self.res('images/menu-root-users.png')}],
-                [{'parent': 'Users', 'label': 'Users', 'page': UsersPage, 'image': self.res('images/menu-users.png')},
-                 {'parent': 'Users', 'label': 'Roles', 'page': RolesPage, 'image': self.res('images/menu-roles.png')},
-                 {'parent': 'Users', 'label': 'Permissions', 'page': PermissionsPage, 'image': self.res('images/menu-permissions.png')},
-                 {'parent': 'Administration', 'label': 'User', 'page': IndividualUserPage, 'image': self.res('images/menu-user.png')}]]
+        return [[{'label': 'Users', 'rel': -2, 'priority': 3, 'image': cbpos.res.auth('images/menu-root-users.png')}],
+                [{'parent': 'Users', 'label': 'Users', 'page': UsersPage, 'image': cbpos.res.auth('images/menu-users.png')},
+                 {'parent': 'Users', 'label': 'Roles', 'page': RolesPage, 'image': cbpos.res.auth('images/menu-roles.png')},
+                 {'parent': 'Users', 'label': 'Permissions', 'page': PermissionsPage, 'image': cbpos.res.auth('images/menu-permissions.png')},
+                 {'parent': 'Administration', 'label': 'User', 'page': IndividualUserPage, 'image': cbpos.res.auth('images/menu-user.png')}]]
 
     def init(self):
         dispatcher.connect(self.do_load_login, signal='ui-post-init', sender='app')

@@ -2,6 +2,8 @@ import cbpos
 
 from cbpos.mod.auth.models import User
 
+from sqlalchemy.orm import exc
+
 class UserState(object):
     __logged_in_user = None
     
