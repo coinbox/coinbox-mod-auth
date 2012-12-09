@@ -31,7 +31,7 @@ class UserState(object):
             else:
                 del self.current
         
-        if self.current is not None and self.current.super:
+        if self.current is not None and not self.current.super:
             # Filter menu items to display according to permissions
             restrictions = [(mr.root, mr.item) for mr in self.current.menu_restrictions] 
             for root in cbpos.menu.main.items:
