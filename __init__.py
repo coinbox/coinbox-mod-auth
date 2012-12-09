@@ -80,7 +80,6 @@ class ModuleLoader(BaseModuleLoader):
             session.commit()
             message = '''No user found. Creating Super User.
 Create a normal user as soon as possible.
-Use F3 to login as superuser again:
 Username: _superuser_
 Password: _superuser_
 '''
