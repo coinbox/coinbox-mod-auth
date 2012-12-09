@@ -20,9 +20,11 @@ class LoginDialog(QtSvg.QSvgWidget):
         self.loginPanel = LoginPanel(self, cbpos.res.auth("images/login.svg"))
         self.loginPanel.setSize(350, 350)
         self.loginPanel.btnLogin.clicked.connect(self.onOkButton)
-        self.loginPanel.editUsername.returnPressed.connect(self.loginPanel.editPassword.setFocus)
+        self.loginPanel.editUsername.currentIndexChanged.connect(self.loginPanel.editPassword.setFocus)
         self.loginPanel.editPassword.returnPressed.connect(self.onOkButton)
         self.loginPanel.btnExit.clicked.connect(self.onExitButton)
+        #Populate users
+        self.populate()
         #Launch login-panel
         QtCore.QTimer.singleShot(300, self.loginPanel.showPanel )
     
@@ -30,18 +32,18 @@ class LoginDialog(QtSvg.QSvgWidget):
         session = cbpos.database.session()
         users = session.query(User.display, User).filter_by(hidden=False).all()
         for user in users:
-            self.user.addItem(*user)
+            self.loginPanel.editUsername.addItem(*user)
     
     def onOkButton(self):
-        username = self.loginPanel.getUserName() #self.user.currentText()
-        password = self.loginPanel.getPassword() #self.password.text()
+        username = self.loginPanel.getUserName()
+        password = self.loginPanel.getPassword()
         
         if user.login(username, password):
             self.loginPanel.hidePanel()
             QtCore.QTimer.singleShot(1000, self.closeAll)
         else:
             #Jad: your text was not translated!
-            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span><span style=" font-size:14pt; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%(cbpos.tr.auth._('Invalid '),cbpos.tr.auth._('username or password.')) )
+            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.') )
             self.loginPanel.editPassword.setFocus()
             self.loginPanel.editPassword.selectAll()
 
