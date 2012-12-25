@@ -62,10 +62,10 @@ class ModuleLoader(BaseModuleLoader):
         """
         Returns the module actions for the Actions toolbar.
         Format for each action:
-        {'label':'TheLabel', 'callback': the_callback, 'icon': 'the_icon.png', 'shortcut':'CTRL-L'} 
+        {'label':'TheLabel', 'callback': the_callback, 'icon': 'the_icon.png', 'shortcut':'Ctrl+L'} 
         """
         return [ 
-            {'label':'Logout', 'callback': self.do_load_login, 'icon': cbpos.res.auth('images/menu-user.png'), 'shortcut':'CTRL-L'}
+            {'label':'Logout', 'callback': self.do_load_login, 'icon': cbpos.res.auth('images/menu-user.png'), 'shortcut':'Ctrl+L'}
         ]
 
 
