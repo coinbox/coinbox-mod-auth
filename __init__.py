@@ -57,6 +57,18 @@ class ModuleLoader(BaseModuleLoader):
                  {'parent': 'Users', 'label': 'Permissions', 'page': PermissionsPage, 'image': cbpos.res.auth('images/menu-permissions.png')},
                  {'parent': 'Administration', 'label': 'User', 'page': IndividualUserPage, 'image': cbpos.res.auth('images/menu-user.png')}]]
 
+    
+    def actions(self):
+        """
+        Returns the module actions for the Actions toolbar.
+        Format for each action:
+        {'label':'TheLabel', 'callback': the_callback, 'icon': 'the_icon.png', 'shortcut':'CTRL-L'} 
+        """
+        return [ 
+            {'label':'Logout', 'callback': self.do_load_login, 'icon': cbpos.res.auth('images/menu-user.png'), 'shortcut':'CTRL-L'}
+        ]
+
+
     def init(self):
         dispatcher.connect(self.do_load_login, signal='ui-post-init', sender='app')
         return True
