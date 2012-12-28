@@ -87,7 +87,7 @@ class LoginPanel(QtSvg.QSvgWidget):
         self.btnLogin.setObjectName("btnLogin")
         self.btnLogin.setFixedHeight(48)
         
-        self.clockAction = QtGui.QAction(QtGui.QIcon(cbpos.res.auth('images/menu-users.png')), cbpos.tr.auth._("Clock in"), self)
+        self.clockAction = QtGui.QAction(QtGui.QIcon(cbpos.res.auth('images/clock_in.png')), cbpos.tr.auth._("Clock in"), self)
         self.loginAction = QtGui.QAction(QtGui.QIcon(cbpos.res.auth('images/menu-users.png')), cbpos.tr.auth._("Log in"), self)
         self.loginMenu = QtGui.QMenu(self)
         self.loginMenu.addAction(self.clockAction)

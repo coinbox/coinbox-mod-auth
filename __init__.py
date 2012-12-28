@@ -69,8 +69,8 @@ class ModuleLoader(BaseModuleLoader):
         """
         return [ 
             {'label':cbpos.tr.auth._('Logout'), 'callback': self.do_load_login, 'icon': cbpos.res.auth('images/menu-user.png'), 'shortcut':'Ctrl+L'},
-            {'label':cbpos.tr.auth._('Clock-in'), 'callback': self.do_load_clock_in, 'icon': cbpos.res.auth('images/menu-user.png'), 'shortcut':'Ctrl+I'},
-            {'label':cbpos.tr.auth._('Clock-out'), 'callback': self.do_load_clock_out, 'icon': cbpos.res.auth('images/menu-user.png'), 'shortcut':'Ctrl+O'}
+            {'label':cbpos.tr.auth._('Clock-in'), 'callback': self.do_load_clock_in, 'icon': cbpos.res.auth('images/clock_in.png'), 'shortcut':'Ctrl+I'},
+            {'label':cbpos.tr.auth._('Clock-out'), 'callback': self.do_load_clock_out, 'icon': cbpos.res.auth('images/clock_out.png'), 'shortcut':'Ctrl+O'}
         ]
 
 
