@@ -54,4 +54,4 @@ class LoginDialog(QtSvg.QSvgWidget):
     
     def onExitButton(self):
         user.current = None
-        self.close()
+        self.close() #here the problem is that if login dialog is called from the mainwindow (actions toolbar), it just closes the login dialog and not exits the app.
