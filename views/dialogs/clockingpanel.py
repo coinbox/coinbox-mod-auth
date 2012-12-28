@@ -113,7 +113,7 @@ class ClockingPanel(QtSvg.QSvgWidget):
         self.setFixedSize(0,0)
         self.setMaxHeight(300)
         self.setMaxWidth(300)
-        self.animRate = 1500
+        self.animRate = 800
         self.shakeTimeToLive = 200 #default shake time..
         self.par = False
         self.parTimes = 0
@@ -251,9 +251,6 @@ class ClockingPanel(QtSvg.QSvgWidget):
     def showPanel(self):
         self.setGeometry(-1000,-1000,0,0)
         self.show()
-        maxStep = 0
-        minStep = 0
-
         maxStep = 0
         minStep = -self.maxHeight
 
