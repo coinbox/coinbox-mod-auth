@@ -86,6 +86,15 @@ class LoginPanel(QtSvg.QSvgWidget):
         self.btnLogin.setDefault(True)
         self.btnLogin.setObjectName("btnLogin")
         self.btnLogin.setFixedHeight(48)
+        
+        self.clockAction = QtGui.QAction(QtGui.QIcon(cbpos.res.auth('images/menu-users.png')), cbpos.tr.auth._("Clock in"), self)
+        self.loginAction = QtGui.QAction(QtGui.QIcon(cbpos.res.auth('images/menu-users.png')), cbpos.tr.auth._("Log in"), self)
+        self.loginMenu = QtGui.QMenu(self)
+        self.loginMenu.addAction(self.clockAction)
+        self.loginMenu.addAction(self.loginAction)
+        self.loginMenu.setDefaultAction(self.loginAction)
+        self.btnLogin.setMenu(self.loginMenu)
+
         self.horizontalLayout.addWidget(self.btnLogin)
         spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem4)
@@ -134,12 +143,18 @@ class LoginPanel(QtSvg.QSvgWidget):
         self.timeLine.finished.connect(self.onAnimationFinished)
         self.timeLine.frameChanged[int].connect(self.animate)
 
-
     def getUserName(self):
         return self.editUsername.currentText()
 
     def getPassword(self):
         return self.editPassword.text()
+
+    def setLoginCallback(self, callback):
+        self.loginAction.triggered.connect(callback)
+        self.btnLogin.clicked.connect(callback)
+
+    def setClockingCallback(self, callback):
+        self.clockAction.triggered.connect(callback)
 
     def setFile(self, File):
         self.load(File)
@@ -175,6 +190,10 @@ class LoginPanel(QtSvg.QSvgWidget):
     def setError(self, text):
         self.lblError.setText(text)
         self.shake()
+        QtCore.QTimer.singleShot(5000, self.clearError)
+
+    def setMessage(self, text):
+        self.lblError.setText(text)
         QtCore.QTimer.singleShot(5000, self.clearError)
 
     def clearError(self):

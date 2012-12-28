@@ -9,6 +9,8 @@ from cbpos.mod.auth.models import User
 
 from cbpos.mod.auth.views.dialogs.loginpanel import LoginPanel
 
+from pydispatch import dispatcher
+
 class LoginDialog(QtSvg.QSvgWidget):
     def __init__(self):
         super(LoginDialog, self).__init__()
@@ -19,10 +21,14 @@ class LoginDialog(QtSvg.QSvgWidget):
         self.showFullScreen() #To center the login widget on screen, and getting space to show it right.
         self.loginPanel = LoginPanel(self, cbpos.res.auth("images/login.svg"))
         self.loginPanel.setSize(350, 350)
-        self.loginPanel.btnLogin.clicked.connect(self.onOkButton)
+        self.loginPanel.setLoginCallback(self.onOkButton)
+        self.loginPanel.setClockingCallback(self.onClocking)
         self.loginPanel.editUsername.currentIndexChanged.connect(self.loginPanel.editPassword.setFocus)
         self.loginPanel.editPassword.returnPressed.connect(self.onOkButton)
         self.loginPanel.btnExit.clicked.connect(self.onExitButton)
+        #for clocking
+        dispatcher.connect(self.onAuthError, signal='do-show-error-on-clock-in', sender=dispatcher.Any)
+        dispatcher.connect(self.onClockingDone, signal='do-hide-clockin-panel', sender=dispatcher.Any)
         #Populate users
         self.populate()
         #Launch login-panel
@@ -34,6 +40,12 @@ class LoginDialog(QtSvg.QSvgWidget):
         for user in users:
             self.loginPanel.editUsername.addItem(*user)
     
+    def onAuthError(self, sender, msg):
+        self.loginPanel.setError(msg)
+
+    def onClockingDone(self, sender, msg):
+        self.loginPanel.setMessage(msg)
+
     def onOkButton(self):
         username = self.loginPanel.getUserName()
         password = self.loginPanel.getPassword()
@@ -46,6 +58,14 @@ class LoginDialog(QtSvg.QSvgWidget):
             self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.') )
             self.loginPanel.editPassword.setFocus()
             self.loginPanel.editPassword.selectAll()
+
+    def onClocking(self):
+        from pydispatch import dispatcher
+
+        username = self.loginPanel.getUserName()
+        password = self.loginPanel.getPassword()
+        print 'Sending signal for clocking...'
+        dispatcher.send(signal='do-clocking', sender='auth-mod-loginDialog', usern=username, passw=password, isIn=True )
 
     def closeAll(self):
         self.close()
