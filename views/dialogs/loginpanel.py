@@ -173,14 +173,21 @@ class LoginPanel(QtSvg.QSvgWidget):
         #print 'Setting Size: %sx%s | Parent %sx%s'%(w,h, self.parent.geometry().width(),self.parent.geometry().height())
     
     def hidePanel(self):
-        self.timeLine.setEasingCurve(QtCore.QEasingCurve.InExpo)
-        self.timeLine.toggleDirection() #reverse!
-        #NOTE: Anyone using this class must be aware of THIS, the aboutBox parent must have a disableUi/actions & enableUi/actions Methods.
-        self.timeLine.start()
-        #self.parent.enableUi()
-        #self.parent.enableActions()
         self.editPassword.clear()
         self.editUsername.clear()
+
+        maj,minor,rel = QtCore.__version_info__ 
+        maj = int(maj); minor=int(minor); rel = int(rel)
+        if maj >= 4 and minor >= 6:
+            self.timeLine.setEasingCurve(QtCore.QEasingCurve.InExpo)
+            self.timeLine.toggleDirection() #reverse!
+            self.timeLine.start()
+        else:
+            self.hide()
+
+        #NOTE: Anyone using this class must be aware of THIS, the aboutBox parent must have a disableUi/actions & enableUi/actions Methods.
+        #self.parent.enableUi()
+        #self.parent.enableActions()
 
     def onAnimationFinished(self):
         if self.timeLine.direction() == QtCore.QTimeLine.Backward :
@@ -267,10 +274,16 @@ class LoginPanel(QtSvg.QSvgWidget):
         minStep = -self.maxHeight
 
         #NOTE: We assume everybody has qt 4.6+.. how to check it? (in c++ -> with #if QT_VERSION >= 0x040600)
-        self.timeLine.setEasingCurve(QtCore.QEasingCurve.OutBounce)
-        self.timeLine.setFrameRange(minStep,maxStep)
-        self.timeLine.setDirection(QtCore.QTimeLine.Forward)
-        self.timeLine.start()
+        maj,minor,rel = QtCore.__version_info__ 
+        maj = int(maj); minor=int(minor); rel = int(rel)
+        if maj >= 4 and minor >= 6:
+            self.timeLine.setEasingCurve(QtCore.QEasingCurve.OutBounce)
+            self.timeLine.setFrameRange(minStep,maxStep)
+            self.timeLine.setDirection(QtCore.QTimeLine.Forward)
+            self.timeLine.start()
+        else:
+            self.setGeometry(QtCore.QRect((self.parent.geometry().width()/2)- self.maxWidth/2, 0, self.maxWidth, self.maxHeight))
+            self.show()
 
         #NOTE: Anyone using this class must be aware of THIS, the aboutBox parent must have a disableUi/actions & enableUi/actions Methods.
         #self.parent.disableUi()

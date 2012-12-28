@@ -169,11 +169,17 @@ class ClockingPanel(QtSvg.QSvgWidget):
         self.setMaxHeight(h)
     
     def hidePanel(self):
-        self.timeLine.setEasingCurve(QtCore.QEasingCurve.InElastic) #InExpo
-        self.timeLine.toggleDirection() #reverse!
-        self.timeLine.start()
         self.editPassword.clear()
         self.editUsername.clear()
+
+        maj,minor,rel = QtCore.__version_info__ 
+        maj = int(maj); minor=int(minor); rel = int(rel)
+        if maj >= 4 and minor >= 6:
+            self.timeLine.setEasingCurve(QtCore.QEasingCurve.InElastic) #InExpo
+            self.timeLine.toggleDirection() #reverse!
+            self.timeLine.start()
+        else:
+            self.hide()
 
     def onAnimationFinished(self):
         if self.timeLine.direction() == QtCore.QTimeLine.Backward :
@@ -255,10 +261,16 @@ class ClockingPanel(QtSvg.QSvgWidget):
         minStep = -self.maxHeight
 
         #NOTE: We assume everybody has qt 4.6+.. how to check it? (in c++ -> with #if QT_VERSION >= 0x040600)
-        self.timeLine.setEasingCurve(QtCore.QEasingCurve.OutElastic)#Expo)
-        self.timeLine.setFrameRange(minStep,maxStep)
-        self.timeLine.setDirection(QtCore.QTimeLine.Forward)
-        self.timeLine.start()
+        maj,minor,rel = QtCore.__version_info__ 
+        maj = int(maj); minor=int(minor); rel = int(rel)
+        if maj >= 4 and minor >= 6:
+            self.timeLine.setEasingCurve(QtCore.QEasingCurve.OutElastic)#Expo)
+            self.timeLine.setFrameRange(minStep,maxStep)
+            self.timeLine.setDirection(QtCore.QTimeLine.Forward)
+            self.timeLine.start()
+        else:
+            self.setGeometry(QtCore.QRect((self.parent.geometry().width()/2)- self.maxWidth/2, 0, self.maxWidth, self.maxHeight))
+            self.show()
 
         #NOTE: Anyone using this class must be aware of THIS, the aboutBox parent must have a disableUi/actions & enableUi/actions Methods.
         #self.parent.disableUi()
