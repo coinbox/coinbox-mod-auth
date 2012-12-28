@@ -114,7 +114,7 @@ class ClockingPanel(QtSvg.QSvgWidget):
         self.setMaxHeight(300)
         self.setMaxWidth(300)
         self.animRate = 1500
-        self.shakeTimeToLive = 400 #default shake time..
+        self.shakeTimeToLive = 200 #default shake time..
         self.par = False
         self.parTimes = 0
 
@@ -183,7 +183,11 @@ class ClockingPanel(QtSvg.QSvgWidget):
     def setError(self, text):
         self.lblError.setText(text)
         self.shake()
-        QtCore.QTimer.singleShot(5000, self.clearError)
+        QtCore.QTimer.singleShot(2000, self.clearError)
+
+    def setMessage(self,text):
+        self.lblError.setText(text)
+        QtCore.QTimer.singleShot(2000, self.clearError)
 
     def clearError(self):
         self.lblError.setText("")
