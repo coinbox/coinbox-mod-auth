@@ -125,7 +125,7 @@ class LoginPanel(QtSvg.QSvgWidget):
         self.setFixedSize(0,0)
         self.setMaxHeight(300)
         self.setMaxWidth(300)
-        self.animRate = 2500 #default animation speed (half second rate).
+        self.animRate = 1000
         self.shakeTimeToLive = 400 #default shake time..
         self.par = False
         self.parTimes = 0
