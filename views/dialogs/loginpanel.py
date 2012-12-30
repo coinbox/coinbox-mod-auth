@@ -36,9 +36,9 @@ class LoginPanel(QtSvg.QSvgWidget):
 
         #Gui components
         self.verticalLayout = QtGui.QVBoxLayout(self)
-        self.verticalLayout.setContentsMargins(15, 5, 5, 15)
+        self.verticalLayout.setContentsMargins(20, 20, 20, 20)
         self.verticalLayout.setObjectName("verticalLayout")
-        spacerItem = QtGui.QSpacerItem(60, 60, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(60, 60, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.verticalLayout.addItem(spacerItem)
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
@@ -72,36 +72,40 @@ class LoginPanel(QtSvg.QSvgWidget):
         self.gridLayout.addItem(spacerItem2, 0, 0, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
         self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(0,5,5,0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem3 = QtGui.QSpacerItem(100, 100, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem3)
-        self.btnExit = QtGui.QPushButton(self)
-        self.btnExit.setMaximumSize(QtCore.QSize(100, 16777215))
-        self.btnExit.setObjectName("btnExit")
-        self.btnExit.setFixedHeight(48)
-        self.horizontalLayout.addWidget(self.btnExit)
+
+        self.lblError = QtGui.QLabel("")
+        self.lblError.setAlignment(QtCore.Qt.AlignCenter)
+        self.verticalLayout.addWidget(self.lblError)
+
+        self.gridLayoutBtns = QtGui.QGridLayout()
+        self.gridLayoutBtns.setObjectName("gridLayoutBtns")
+        self.verticalLayout.addLayout(self.gridLayoutBtns)
+        self.btnLoginNClockin = QtGui.QPushButton(self)
+        self.btnLoginNClockin.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.btnLoginNClockin.setObjectName("btnLoginNClockin")
+        self.btnLoginNClockin.setFixedHeight(48)
+        self.gridLayoutBtns.addWidget(self.btnLoginNClockin, 0, 0, 1, 1)
         self.btnLogin = QtGui.QPushButton(self)
         self.btnLogin.setMinimumSize(QtCore.QSize(150, 0))
         self.btnLogin.setMaximumSize(QtCore.QSize(200, 16777215))
         self.btnLogin.setDefault(True)
         self.btnLogin.setObjectName("btnLogin")
         self.btnLogin.setFixedHeight(48)
+        self.gridLayoutBtns.addWidget(self.btnLogin, 0, 1, 1, 1)
+        self.btnExit = QtGui.QPushButton(self)
+        self.btnExit.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.btnExit.setObjectName("btnExit")
+        self.btnExit.setFixedHeight(48)
+        self.gridLayoutBtns.addWidget(self.btnExit, 1, 0, 1, 1)
+        self.btnClockin = QtGui.QPushButton(self)
+        self.btnClockin.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.btnClockin.setObjectName("btnClockin")
+        self.btnClockin.setFixedHeight(48)
+        self.gridLayoutBtns.addWidget(self.btnClockin, 1, 1, 1, 1)
         
-        self.clockAction = QtGui.QAction(QtGui.QIcon(cbpos.res.auth('images/clock_in.png')), cbpos.tr.auth._("Clock in"), self)
-        self.loginAction = QtGui.QAction(QtGui.QIcon(cbpos.res.auth('images/menu-users.png')), cbpos.tr.auth._("Log in"), self)
-        self.loginMenu = QtGui.QMenu(self)
-        self.loginMenu.addAction(self.clockAction)
-        self.loginMenu.addAction(self.loginAction)
-        self.loginMenu.setDefaultAction(self.loginAction)
-        self.btnLogin.setMenu(self.loginMenu)
-
-        self.horizontalLayout.addWidget(self.btnLogin)
-        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem4)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.lblError = QtGui.QLabel("")
-        self.lblError.setAlignment(QtCore.Qt.AlignCenter)
-        self.verticalLayout.addWidget(self.lblError)
         #spacerItem5 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         #self.verticalLayout.addItem(spacerItem5)
 
@@ -112,9 +116,12 @@ class LoginPanel(QtSvg.QSvgWidget):
         self.lblPassword.setText("<b><i>" + cbpos.tr.auth._("Password:") + "</i></b>")
         self.lblUsername.setStyleSheet("color:white")
         self.lblPassword.setStyleSheet("color:white")
+        self.lblError.setStyleSheet("color:white")
         self.editPassword.setPlaceholderText(cbpos.tr.auth._("Enter your password"))
         self.btnExit.setText(cbpos.tr.auth._("Exit"))
         self.btnLogin.setText(cbpos.tr.auth._("Log in"))
+        self.btnLoginNClockin.setText(cbpos.tr.auth._("Login && Clockin"))
+        self.btnClockin.setText(cbpos.tr.auth._("Clock in"))
         
         #setting member properties
         self.parent = parent
@@ -150,11 +157,13 @@ class LoginPanel(QtSvg.QSvgWidget):
         return self.editPassword.text()
 
     def setLoginCallback(self, callback):
-        self.loginAction.triggered.connect(callback)
         self.btnLogin.clicked.connect(callback)
 
     def setClockingCallback(self, callback):
-        self.clockAction.triggered.connect(callback)
+        self.btnClockin.clicked.connect(callback)
+
+    def setLoginAndClockinCallback(self, callback):
+        self.btnLoginNClockin.clicked.connect(callback)
 
     def setFile(self, File):
         self.load(File)

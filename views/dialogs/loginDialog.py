@@ -23,6 +23,7 @@ class LoginDialog(QtSvg.QSvgWidget):
         self.loginPanel.setSize(350, 350)
         self.loginPanel.setLoginCallback(self.onOkButton)
         self.loginPanel.setClockingCallback(self.onClocking)
+        self.loginPanel.setLoginAndClockinCallback(self.onLoginAndClockin)
         self.loginPanel.editUsername.currentIndexChanged.connect(self.loginPanel.editPassword.setFocus)
         self.loginPanel.editPassword.returnPressed.connect(self.onOkButton)
         self.loginPanel.btnExit.clicked.connect(self.onExitButton)
@@ -64,8 +65,13 @@ class LoginDialog(QtSvg.QSvgWidget):
 
         username = self.loginPanel.getUserName()
         password = self.loginPanel.getPassword()
-        print 'Sending signal for clocking...'
         dispatcher.send(signal='do-clocking', sender='auth-mod-loginDialog', usern=username, passw=password, isIn=True )
+
+    def onLoginAndClockin(self):
+        #first we do the clockin...
+        self.onClocking()
+        #then the login
+        self.onOkButton()
 
     def closeAll(self):
         self.close()
@@ -75,3 +81,8 @@ class LoginDialog(QtSvg.QSvgWidget):
     def onExitButton(self):
         user.current = None
         self.close() #here the problem is that if login dialog is called from the mainwindow (actions toolbar), it just closes the login dialog and not exits the app.
+        #The next fixes the above problem, but im not sure if it is a clean and good approach.
+        import sys
+        if cbpos is not None:
+            cbpos.terminate()
+            sys.exit()
