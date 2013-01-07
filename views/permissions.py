@@ -53,6 +53,7 @@ class PermissionsPage(FormPage):
                         mr = session.query(MenuRestriction).filter_by(root=item.label, item=i.label).one()
                     except exc.NoResultFound, exc.MultipleResultsFound:
                         mr = MenuRestriction(root=item.label, item=i.label)
+                    child.setData(0, QtCore.Qt.UserRole+1, mr)
                     if (item.label, i.label) in restrictions:
                         child.setCheckState(0, QtCore.Qt.Checked)
                     else:

@@ -4,6 +4,11 @@ from cbpos.mod.auth.models import User
 
 from sqlalchemy.orm import exc
 
+import os, base64
+
+import logging
+logger = logging.getLogger(__name__)
+
 class UserState(object):
     __logged_in_user = None
     
@@ -42,5 +47,15 @@ class UserState(object):
     
     def is_logged_in(self):
         return self.current is not None
+    
+    @property
+    def secret_key(self):
+        if not cbpos.config['mod.auth', 'secret_key']:
+            k = base64.b64encode(os.urandom(50))
+            cbpos.config['mod.auth', 'secret_key'] = k
+            cbpos.config.save()
+            logger.debug('Authentication secret key set.')
+         
+        return base64.b64decode(cbpos.config['mod.auth', 'secret_key'])
 
 user = UserState()

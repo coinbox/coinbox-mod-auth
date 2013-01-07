@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class ModuleLoader(BaseModuleLoader):
     dependencies = ('base',)
-    config = [['mod.auth', {'allow_empty_passwords': '1'}]]
+    config = [['mod.auth', {'allow_empty_passwords': '1', 'secret_key': ''}]]
     name = 'Authentication Support'
 
     def load(self):
@@ -75,6 +75,12 @@ class ModuleLoader(BaseModuleLoader):
 
 
     def init(self):
+        from cbpos.mod.auth.controllers import user
+        try:
+            assert user.secret_key, 'Secret key is not set!'
+        except:
+            logger.warning('Secret key is damaged or not set!')
+            return False
         dispatcher.connect(self.do_load_login, signal='ui-post-init', sender='app')
         dispatcher.connect(self.do_clocking, signal='do-clocking', sender=dispatcher.Any)
         return True
@@ -101,7 +107,7 @@ Create a normal user as soon as possible.
 Username: _superuser_
 Password: _superuser_
 '''
-            QtGui.QMessageBox.information(self, 'Login', message, QtGui.QMessageBox.Ok)
+            QtGui.QMessageBox.information(QtGui.QWidget(), 'Login', message, QtGui.QMessageBox.Ok)
             return True
 
     def config_panels(self):
@@ -123,7 +129,7 @@ Password: _superuser_
         dispatcher.send(signal='do-show-clockout-panel', sender='auth', isIn=False)
 
 
-    def do_clocking(sender, usern, passw, isIn):
+    def do_clocking(self, sender, usern, passw, isIn):
         """
         This does the authentication for the user, and creates the entry for the clock-in at the database.
         """

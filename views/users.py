@@ -73,6 +73,7 @@ class UsersPage(FormPage):
     def setDataOnControl(self, field, data):
         if field == 'username':
             self.f[field].setText(data)
+            self.f[field].setEnabled(self.editing and self.item is None)
         elif field == 'hidden':
             self.f[field].setChecked(data)
         elif field == 'role':
