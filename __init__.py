@@ -73,7 +73,6 @@ class ModuleLoader(BaseModuleLoader):
             {'label':cbpos.tr.auth._('Clock-out'), 'callback': self.do_load_clock_out, 'icon': cbpos.res.auth('images/clock_out.png'), 'shortcut':'Ctrl+O'}
         ]
 
-
     def init(self):
         from cbpos.mod.auth.controllers import user
         try:
@@ -82,7 +81,6 @@ class ModuleLoader(BaseModuleLoader):
             logger.warning('Secret key is damaged or not set!')
             return False
         dispatcher.connect(self.do_load_login, signal='ui-post-init', sender='app')
-        dispatcher.connect(self.do_clocking, signal='do-clocking', sender=dispatcher.Any)
         return True
 
     def do_load_login(self):
@@ -110,68 +108,30 @@ Password: _superuser_
             QtGui.QMessageBox.information(QtGui.QWidget(), 'Login', message, QtGui.QMessageBox.Ok)
             return True
 
+    def do_load_clock_in(self):
+        from PySide import QtGui
+        from cbpos.mod.auth.controllers import user
+        import datetime
+        if user.clockin():
+            date_time = datetime.datetime.now()
+            message = cbpos.tr.auth._('Clock in sucessful.\nYour in time is %s'%date_time)
+            QtGui.QMessageBox.information(QtGui.QWidget(), 'Clockin', message, QtGui.QMessageBox.Ok)
+        else:
+            message = cbpos.tr.auth._('Clock in UNSUCCESSFUL')
+            QtGui.QMessageBox.information(QtGui.QWidget(), 'Clockin', message, QtGui.QMessageBox.Ok)
+
+    def do_load_clock_out(self):
+        from PySide import QtGui
+        from cbpos.mod.auth.controllers import user
+        import datetime
+        if user.clockout():
+            date_time = datetime.datetime.now()
+            message = cbpos.tr.auth._('Clock out sucessful.\nYour out time is %s'%date_time)
+            QtGui.QMessageBox.information(QtGui.QWidget(), 'Clockin', message, QtGui.QMessageBox.Ok)
+        else:
+            message = cbpos.tr.auth._('Clock out UNSUCESSFUL')
+            QtGui.QMessageBox.information(QtGui.QWidget(), 'Clockin', message, QtGui.QMessageBox.Ok)
+
     def config_panels(self):
         from cbpos.mod.auth.views import UserConfigPage 
         return [UserConfigPage]
-
-    def do_load_clock_in(self):
-        """
-        Loads the Clock-in dialog.
-        """
-        #Here we just send a signal to open the clocking panel. We just need to wait for the proper signal to arraive again.
-        dispatcher.send(signal='do-show-clockin-panel', sender='auth', isIn=True)
-
-    def do_load_clock_out(self):
-        """
-        Loads the Clock-out dialog.
-        """
-        #Here we just send a signal to open the clocking panel. We just need to wait for the proper signal to arraive again.
-        dispatcher.send(signal='do-show-clockout-panel', sender='auth', isIn=False)
-
-
-    def do_clocking(self, sender, usern, passw, isIn):
-        """
-        This does the authentication for the user, and creates the entry for the clock-in at the database.
-        """
-        from cbpos.mod.auth.controllers import user
-        from cbpos.mod.auth.models import User, Clock
-        import datetime
-
-        session = cbpos.database.session()
-
-        if user.login(usern, passw):
-            date_time = datetime.datetime.now()
-            the_user  = session.query(User).filter_by(username=usern).first()
-            ok_msg = ""
-            if isIn:
-                #create the new row.
-                clockcard = Clock(user=the_user, date_time_in=date_time, date_time_out=date_time)
-                session.add(clockcard)
-                session.commit()
-                ok_msg = cbpos.tr.auth._('Clock in sucessful.\nYour in time is %s'%date_time)
-            else:
-                #Look for the last row for the user, which must have an out equal to the in.
-                #In most cases, there will be only one row, but in some cases may be more due to someone forgetting the clock out.
-                clockcard = session.query(Clock).filter_by(user=the_user).filter(Clock.date_time_in==Clock.date_time_out)
-                #in cases where there are more than one, we need to know which to apply the changes.
-                if clockcard.count() > 1:
-                    #What to do really? Apply to the last one?
-                    clockcard = clockcard.order_by("id DESC").first() #here we find the last one (ordering by id in descending order)
-                else:
-                    clockcard = clockcard.order_by("id DESC").first()
-
-                try:
-                    clockcard.date_time_out = date_time
-                    session.commit()
-                    ok_msg = cbpos.tr.auth._('Clock out sucessful.\nYour in time is %s'%date_time)
-                except Exception as e:
-                    session.rollback()
-                    ok_msg = cbpos.tr.auth._('Clock out UNSUCESSFUL')
-                    logger.debug("Error on saving clock out for user %s. Error is: %s"%(usern, e))
-
-
-            dispatcher.send(signal='do-hide-clockin-panel', sender='auth', msg=ok_msg)
-        else:
-            error_msg = '<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.') 
-            #Send the signal for error
-            dispatcher.send(signal='do-show-error-on-clock-in', sender='auth', msg=error_msg)

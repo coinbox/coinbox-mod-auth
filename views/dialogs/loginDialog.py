@@ -2,6 +2,8 @@ from PySide import QtGui, QtSvg, QtCore
 
 import cbpos
 
+import datetime
+
 from cbpos.mod.auth.controllers import user
 from cbpos.mod.auth.models import User
 
@@ -27,9 +29,6 @@ class LoginDialog(QtSvg.QSvgWidget):
         self.loginPanel.editUsername.currentIndexChanged.connect(self.loginPanel.editPassword.setFocus)
         self.loginPanel.editPassword.returnPressed.connect(self.onOkButton)
         self.loginPanel.btnExit.clicked.connect(self.onExitButton)
-        #for clocking
-        dispatcher.connect(self.onAuthError, signal='do-show-error-on-clock-in', sender=dispatcher.Any)
-        dispatcher.connect(self.onClockingDone, signal='do-hide-clockin-panel', sender=dispatcher.Any)
         #Populate users
         self.populate()
         #Launch login-panel
@@ -40,12 +39,6 @@ class LoginDialog(QtSvg.QSvgWidget):
         users = session.query(User.display, User).filter_by(hidden=False).all()
         for user in users:
             self.loginPanel.editUsername.addItem(*user)
-    
-    def onAuthError(self, sender, msg):
-        self.loginPanel.setError(msg)
-
-    def onClockingDone(self, sender, msg):
-        self.loginPanel.setMessage(msg)
 
     def onOkButton(self):
         username = self.loginPanel.getUserName()
@@ -55,17 +48,27 @@ class LoginDialog(QtSvg.QSvgWidget):
             self.loginPanel.hidePanel()
             QtCore.QTimer.singleShot(1000, self.closeAll)
         else:
-            #Jad: your text was not translated!
             self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.') )
             self.loginPanel.editPassword.setFocus()
             self.loginPanel.editPassword.selectAll()
 
     def onClocking(self):
-        from pydispatch import dispatcher
-
         username = self.loginPanel.getUserName()
         password = self.loginPanel.getPassword()
-        dispatcher.send(signal='do-clocking', sender='auth-mod-loginDialog', usern=username, passw=password, isIn=True )
+        
+        u = user.check(username, password)
+        if u:
+            if user.clockin(u):
+                date_time = datetime.datetime.now()
+                ok_msg = cbpos.tr.auth._('Clock in sucessful.\nYour in time is %s'%date_time)
+                self.loginPanel.setMessage(ok_msg)
+            else:
+                ok_msg = cbpos.tr.auth._('Clock in UNSUCCESSFUL')
+                self.loginPanel.setError(ok_msg)
+        else:
+            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.') )
+            self.loginPanel.editPassword.setFocus()
+            self.loginPanel.editPassword.selectAll()
 
     def onLoginAndClockin(self):
         #first we do the clockin...
