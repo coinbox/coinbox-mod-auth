@@ -103,7 +103,7 @@ class UserState(object):
             session.commit()
         except Exception as e:
             session.rollback()
-            logger.debug("Error on saving clock out for user %s. Error is: %s"%(usern, e))
+            logger.debug("Error on saving clock out for user %s. Error is: %s"%(u, e))
             return False
         else:
             return True

@@ -7,8 +7,6 @@ import datetime
 from cbpos.mod.auth.controllers import user
 from cbpos.mod.auth.models import User
 
-#from pos.modules.user.windows import UserCatalog
-
 from cbpos.mod.auth.views.dialogs.loginpanel import LoginPanel
 
 from pydispatch import dispatcher
@@ -71,10 +69,20 @@ class LoginDialog(QtSvg.QSvgWidget):
             self.loginPanel.editPassword.selectAll()
 
     def onLoginAndClockin(self):
-        #first we do the clockin...
-        self.onClocking()
-        #then the login
-        self.onOkButton()
+        username = self.loginPanel.getUserName()
+        password = self.loginPanel.getPassword()
+        
+        if user.login(username, password):
+            if user.clockin():
+                self.loginPanel.hidePanel()
+                QtCore.QTimer.singleShot(1000, self.closeAll)
+            else:
+                ok_msg = cbpos.tr.auth._('Clock in UNSUCCESSFUL')
+                self.loginPanel.setError(ok_msg)
+        else:
+            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.') )
+            self.loginPanel.editPassword.setFocus()
+            self.loginPanel.editPassword.selectAll()
 
     def closeAll(self):
         self.close()
@@ -83,9 +91,5 @@ class LoginDialog(QtSvg.QSvgWidget):
     
     def onExitButton(self):
         user.current = None
-        self.close() #here the problem is that if login dialog is called from the mainwindow (actions toolbar), it just closes the login dialog and not exits the app.
-        #The next fixes the above problem, but im not sure if it is a clean and good approach.
-        import sys
-        if cbpos is not None:
-            cbpos.terminate()
-            sys.exit()
+        self.close()
+        cbpos.terminate()
