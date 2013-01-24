@@ -21,14 +21,14 @@ class ModuleLoader(BaseModuleLoader):
         mr = lambda root, item: MenuRestriction(root=root, item=item)
     
         permissions_text = [
-            ('common', 'Manage own user information', [mr('Administration', 'User')]),
-            ('users', 'Manage users, permissions and roles.', [mr('Users', 'Users'), mr('Users', 'Roles'), mr('Users', 'Permissions')]),
-            ('sales', 'Manage sales: tickets and orders.', [mr('Main', 'Sales'), mr('Main', 'Debts')]),
+            ('common', 'Manage own user information', [mr('administration', 'user')]),
+            ('users', 'Manage users, permissions and roles.', [mr('users', 'users'), mr('users', 'roles'), mr('users', 'permissions')]),
+            ('sales', 'Manage sales: tickets and orders.', [mr('main', 'sales'), mr('main', 'debts')]),
             ('cash', 'Manage cash register: close cash and manage payments.', []),
-            ('stock', 'Manage products and categories in stock.', [mr('Stock', 'Products'), mr('Stock', 'Categories'), mr('Stock', 'Stock Diary')]),
-            ('customers', 'Manage customers.', [mr('Customers', 'Customers'), mr('Customers', 'Groups')]),
-            ('reports', 'View and print reports.', [mr('Reports', 'Sales'), mr('Reports', 'Customers'), mr('Reports', 'Stock'), mr('Reports', 'Stock Diary'), mr('Reports', 'Users')]),
-            ('system', 'Edit system settings.', [mr('System', 'Configuration'), mr('System', 'Currencies')])]
+            ('stock', 'Manage products and categories in stock.', [mr('stock', 'products'), mr('stock', 'categories'), mr('stock', 'stock-diary')]),
+            ('customers', 'Manage customers.', [mr('customers', 'customers'), mr('customers', 'groups')]),
+            ('reports', 'View and print reports.', [mr('reports', 'sales'), mr('reports', 'customers'), mr('reports', 'stock'), mr('reports', 'stock-diary'), mr('reports', 'users')]),
+            ('system', 'Edit system settings.', [mr('system', 'configuration'), mr('system', 'currencies')])]
         permissions = [Permission(name=p[0], description=p[1], menu_restrictions=p[2]) for p in permissions_text]
     
         admin_permissions = map(lambda p: permissions[p], range(len(permissions)))
@@ -52,26 +52,63 @@ class ModuleLoader(BaseModuleLoader):
         session.commit()
 
     def menu(self):
+        from cbpos.interface import MenuRoot, MenuItem
         from cbpos.mod.auth.views import UsersPage, RolesPage, PermissionsPage, IndividualUserPage
         
-        return [[{'label': 'Users', 'rel': -2, 'priority': 3, 'image': cbpos.res.auth('images/menu-root-users.png')}],
-                [{'parent': 'Users', 'label': 'Users', 'page': UsersPage, 'image': cbpos.res.auth('images/menu-users.png')},
-                 {'parent': 'Users', 'label': 'Roles', 'page': RolesPage, 'image': cbpos.res.auth('images/menu-roles.png')},
-                 {'parent': 'Users', 'label': 'Permissions', 'page': PermissionsPage, 'image': cbpos.res.auth('images/menu-permissions.png')},
-                 {'parent': 'Administration', 'label': 'User', 'page': IndividualUserPage, 'image': cbpos.res.auth('images/menu-user.png')}]]
+        return [[MenuRoot('users',
+                          label=cbpos.tr.auth._('Users'),
+                          icon=cbpos.res.auth('images/menu-root-users.png'),
+                          rel=-2,
+                          priority=3
+                          )],
+                [MenuItem('users', parent='users',
+                          label=cbpos.tr.auth._('Users'),
+                          icon=cbpos.res.auth('images/menu-users.png'),
+                          page=UsersPage
+                          ),
+                 MenuItem('roles', parent='users',
+                          label=cbpos.tr.auth._('Roles'),
+                          icon=cbpos.res.auth('images/menu-roles.png'),
+                          page=RolesPage
+                          ),
+                 MenuItem('permissions', parent='users',
+                          label=cbpos.tr.auth._('Permissions'),
+                          icon=cbpos.res.auth('images/menu-permissions.png'),
+                          page=PermissionsPage
+                          ),
+                 MenuItem('indivdual-user', parent='administration',
+                          label=cbpos.tr.auth._('User'),
+                          icon=cbpos.res.auth('images/menu-user.png'),
+                          page=IndividualUserPage
+                          )
+                 ]
+                ]
 
     
     def actions(self):
         """
-        Returns the module actions for the Actions toolbar.
-        Format for each action:
-        {'label':'TheLabel', 'callback': the_callback, 'icon': 'the_icon.png', 'shortcut':'Ctrl+L'} 
+        Returns a list of Action objects.
         """
-        return [ 
-            {'label':cbpos.tr.auth._('Logout'), 'callback': self.do_load_login, 'icon': cbpos.res.auth('images/menu-user.png'), 'shortcut':'Ctrl+L'},
-            {'label':cbpos.tr.auth._('Clock-in'), 'callback': self.do_load_clock_in, 'icon': cbpos.res.auth('images/clock_in.png'), 'shortcut':'Ctrl+I'},
-            {'label':cbpos.tr.auth._('Clock-out'), 'callback': self.do_load_clock_out, 'icon': cbpos.res.auth('images/clock_out.png'), 'shortcut':'Ctrl+O'}
-        ]
+        from cbpos.interface import Action
+        return [Action('logout',
+                       label=cbpos.tr.auth._('Logout'),
+                       icon=cbpos.res.auth('images/menu-user.png'),
+                       shortcut='Ctrl+L',
+                       signal='action-logout'
+                       ),
+                Action('clockin',
+                       label=cbpos.tr.auth._('Clock-in'),
+                       icon=cbpos.res.auth('images/clock_in.png'),
+                       shortcut='Ctrl+I',
+                       signal='action-clockin'
+                       ),
+                Action('clockout',
+                       label=cbpos.tr.auth._('Clock-out'),
+                       icon=cbpos.res.auth('images/clock_out.png'),
+                       shortcut='Ctrl+O',
+                       signal='action-clockout'
+                       )
+                ]
 
     def init(self):
         from cbpos.mod.auth.controllers import user
@@ -84,9 +121,14 @@ class ModuleLoader(BaseModuleLoader):
         return True
 
     def do_load_login(self):
+        
+        # Extend the main window, for the clocking feature
+        from cbpos.mod.auth.views import ClockingMainWindow
+        cbpos.ui.extend_default(ClockingMainWindow)
+        
+        # Load the login dialog before anything else
         from PySide import QtGui
         from cbpos.mod.auth.views.dialogs import LoginDialog
-        # TODO: change this!
         from cbpos.mod.auth.controllers import user
         from cbpos.mod.auth.models import User
         
@@ -107,30 +149,6 @@ Password: _superuser_
 '''
             QtGui.QMessageBox.information(QtGui.QWidget(), 'Login', message, QtGui.QMessageBox.Ok)
             return True
-
-    def do_load_clock_in(self):
-        from PySide import QtGui
-        from cbpos.mod.auth.controllers import user
-        import datetime
-        if user.clockin():
-            date_time = datetime.datetime.now()
-            message = cbpos.tr.auth._('Clock in sucessful.\nYour in time is %s'%date_time)
-            QtGui.QMessageBox.information(QtGui.QWidget(), 'Clockin', message, QtGui.QMessageBox.Ok)
-        else:
-            message = cbpos.tr.auth._('Clock in UNSUCCESSFUL')
-            QtGui.QMessageBox.information(QtGui.QWidget(), 'Clockin', message, QtGui.QMessageBox.Ok)
-
-    def do_load_clock_out(self):
-        from PySide import QtGui
-        from cbpos.mod.auth.controllers import user
-        import datetime
-        if user.clockout():
-            date_time = datetime.datetime.now()
-            message = cbpos.tr.auth._('Clock out sucessful.\nYour out time is %s'%date_time)
-            QtGui.QMessageBox.information(QtGui.QWidget(), 'Clockin', message, QtGui.QMessageBox.Ok)
-        else:
-            message = cbpos.tr.auth._('Clock out UNSUCESSFUL')
-            QtGui.QMessageBox.information(QtGui.QWidget(), 'Clockin', message, QtGui.QMessageBox.Ok)
 
     def config_panels(self):
         from cbpos.mod.auth.views import UserConfigPage 

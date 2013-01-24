@@ -44,15 +44,15 @@ class PermissionsPage(FormPage):
             session = cbpos.database.session()
             restrictions = [(mr.root, mr.item) for mr in data]
             self.f[field].clear()
-            for item in cbpos.menu.main.items:
+            for item in cbpos.menu.items:
                 root = QtGui.QTreeWidgetItem(self.f[field], [item.label])
                 root.setExpanded(True)
                 for i in item.children:
                     child = QtGui.QTreeWidgetItem(root, [i.label])
                     try:
-                        mr = session.query(MenuRestriction).filter_by(root=item.label, item=i.label).one()
+                        mr = session.query(MenuRestriction).filter_by(root=item.name, item=i.name).one()
                     except exc.NoResultFound, exc.MultipleResultsFound:
-                        mr = MenuRestriction(root=item.label, item=i.label)
+                        mr = MenuRestriction(root=item.name, item=i.name)
                     child.setData(0, QtCore.Qt.UserRole+1, mr)
                     if (item.label, i.label) in restrictions:
                         child.setCheckState(0, QtCore.Qt.Checked)

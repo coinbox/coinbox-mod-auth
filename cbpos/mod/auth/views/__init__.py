@@ -4,3 +4,5 @@ from .permissions import PermissionsPage
 from .user import IndividualUserPage
 
 from .config import UserConfigPage
+
+from .window import ClockingMainWindow

@@ -44,11 +44,10 @@ class UserState(object):
         if self.current is not None and not self.current.super:
             # Filter menu items to display according to permissions
             restrictions = [(mr.root, mr.item) for mr in self.current.menu_restrictions] 
-            for root in cbpos.menu.main.items:
+            for root in cbpos.menu.items:
                 for item in root.children:
                     item.enabled = ((root.label, item.label) in restrictions)
         
-        print self.current, u
         return self.current
     
     def is_logged_in(self):
