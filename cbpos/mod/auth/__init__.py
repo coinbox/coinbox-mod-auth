@@ -117,11 +117,12 @@ class ModuleLoader(BaseModuleLoader):
         except:
             logger.warning('Secret key is damaged or not set!')
             return False
-        dispatcher.connect(self.do_load_login, signal='ui-post-init', sender='app')
+        
+        dispatcher.connect(self.do_post_init, signal='ui-post-init', sender='app')
+        
         return True
 
-    def do_load_login(self):
-        
+    def do_post_init(self):
         # Extend the main window, for the clocking feature
         from cbpos.mod.auth.views import ClockingMainWindow
         cbpos.ui.extend_default(ClockingMainWindow)

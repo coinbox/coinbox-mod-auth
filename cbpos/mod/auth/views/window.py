@@ -9,6 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from cbpos.mod.auth.views.dialogs.clockingpanel import ClockingPanel
+from cbpos.mod.auth.views.dialogs import LoginDialog
 from cbpos.mod.auth.controllers import user
 from cbpos.mod.base.ui import MainWindowExtension
 
@@ -28,9 +29,15 @@ class ClockingMainWindow(MainWindowExtension):
         
         dispatcher.connect(self.do_show_clockin, signal='action-clockin', sender='action')
         dispatcher.connect(self.do_show_clockout, signal='action-clockout', sender='action')
+        dispatcher.connect(self.do_logout, signal='action-logout', sender='action')
         
         self.clockingPanel.setIsIn(True)
         self.clockingPanel.showPanel()
+
+    def do_logout(self):
+        self.close()
+        cbpos.ui.window = dialog =  LoginDialog()
+        dialog.show()
 
     def do_show_clockin(self):
         self.clockingPanel.setIsIn(True)
