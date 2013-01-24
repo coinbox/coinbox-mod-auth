@@ -46,7 +46,7 @@ class UserState(object):
             restrictions = [(mr.root, mr.item) for mr in self.current.menu_restrictions] 
             for root in cbpos.menu.items:
                 for item in root.children:
-                    item.enabled = ((root.label, item.label) in restrictions)
+                    item.enabled = ((root.name, item.name) in restrictions)
         
         return self.current
     

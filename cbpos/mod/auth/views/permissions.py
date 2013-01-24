@@ -54,7 +54,7 @@ class PermissionsPage(FormPage):
                     except exc.NoResultFound, exc.MultipleResultsFound:
                         mr = MenuRestriction(root=item.name, item=i.name)
                     child.setData(0, QtCore.Qt.UserRole+1, mr)
-                    if (item.label, i.label) in restrictions:
+                    if (item.name, i.name) in restrictions:
                         child.setCheckState(0, QtCore.Qt.Checked)
                     else:
                         child.setCheckState(0, QtCore.Qt.Unchecked)
