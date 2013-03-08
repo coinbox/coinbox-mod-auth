@@ -33,6 +33,7 @@ class ClockingMainWindow(MainWindowExtension):
         
         self.clockingPanel.setIsIn(True)
         self.clockingPanel.showPanel()
+        self.tabs.setEnabled(False)
 
     def do_logout(self):
         self.close()
@@ -42,14 +43,17 @@ class ClockingMainWindow(MainWindowExtension):
     def do_show_clockin(self):
         self.clockingPanel.setIsIn(True)
         self.clockingPanel.showPanel()
+        self.tabs.setEnabled(False)
     
     def do_show_clockout(self):
         self.clockingPanel.setIsIn(False)
         self.clockingPanel.showPanel()
+        self.tabs.setEnabled(False)
 
     def do_hidePanel(self):
         self.clockingPanel.clean()
         self.clockingPanel.hidePanel()
+        self.tabs.setEnabled(True)
 
     def onDoClocking(self):
         username = self.clockingPanel.getUserName()
