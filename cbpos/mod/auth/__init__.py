@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class ModuleLoader(BaseModuleLoader):
     dependencies = ('base',)
-    config = [['mod.auth', {'allow_empty_passwords': '1', 'secret_key': ''}]]
+    config = [['mod.auth', {'allow_empty_passwords': '1'}]]
     name = 'Authentication Support'
 
     def load(self):
@@ -111,13 +111,6 @@ class ModuleLoader(BaseModuleLoader):
                 ]
 
     def init(self):
-        from cbpos.mod.auth.controllers import user
-        try:
-            assert user.secret_key, 'Secret key is not set!'
-        except:
-            logger.warning('Secret key is damaged or not set!')
-            return False
-        
         dispatcher.connect(self.do_post_init, signal='ui-post-init', sender='app')
         
         return True

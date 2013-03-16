@@ -9,7 +9,7 @@ from sqlalchemy import func, Table, Column, Integer, String, Float, Boolean, Met
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method, Comparator
 
-from hashlib import sha256
+import bcrypt
 
 current = None
 
@@ -18,7 +18,7 @@ class User(cbpos.database.Base, common.Item):
 
     id = Column(Integer, primary_key=True)
     username = Column(String(255), nullable=False, unique=True)
-    encoded_password = Column('password', String(64), nullable=False)
+    encoded_password = Column('password', String(60), nullable=False)
     hidden = Column(Boolean, default=False)
     super = Column(Boolean, default=False)
     role_id = Column(Integer, ForeignKey('roles.id'), nullable=True)
@@ -52,11 +52,10 @@ class User(cbpos.database.Base, common.Item):
         return query.all()
 
     def login(self, password):
-        return self.encoded_password == self.encode(password)
+        return bcrypt.hashpw(password, self.encoded_password) == self.encoded_password
 
     def encode(self, password):
-        from cbpos.mod.auth.controllers import user
-        return sha256('coinbox/{}/{}/{}'.format(self.username, password, user.secret_key)).hexdigest()
+        return bcrypt.hashpw(password, bcrypt.gensalt())
 
     @hybrid_property
     def display(self):
