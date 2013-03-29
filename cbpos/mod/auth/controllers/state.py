@@ -1,13 +1,11 @@
-import cbpos
-
-from cbpos.mod.auth.models import User, Clock
-
 from sqlalchemy.orm import exc
 
 import os, base64, datetime
 
-import logging
-logger = logging.getLogger(__name__)
+import cbpos
+logger = cbpos.get_logger(__name__)
+
+from cbpos.mod.auth.models import User, Clock
 
 class UserState(object):
     __logged_in_user = None

@@ -4,9 +4,7 @@ from PySide import QtGui, QtCore
 import datetime
 
 import cbpos
-
-import logging
-logger = logging.getLogger(__name__)
+logger = cbpos.get_logger(__name__)
 
 from cbpos.mod.auth.views.dialogs.clockingpanel import ClockingPanel
 from cbpos.mod.auth.views.dialogs import LoginDialog
