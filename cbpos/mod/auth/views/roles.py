@@ -35,12 +35,11 @@ class RolesPage(FormPage):
             self.f[field].setText(data)
         elif field == 'permissions':
             session = cbpos.database.session()
-            items = session.query(Permission.display, Permission).all()
             self.f[field].clear()
-            for item in items:
-                root = QtGui.QTreeWidgetItem(self.f[field], [item[0]])
-                root.setData(0, QtCore.Qt.UserRole+1, item[1])
-                if item[1] in data:
+            for item in session.query(Permission):
+                root = QtGui.QTreeWidgetItem(self.f[field], [item.display])
+                root.setData(0, QtCore.Qt.UserRole+1, item)
+                if item in data:
                     root.setCheckState(0, QtCore.Qt.Checked)
                 else:
                     root.setCheckState(0, QtCore.Qt.Unchecked)

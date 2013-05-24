@@ -19,8 +19,7 @@ class UsersFormController(FormController):
     
     def items(self):
         session = cbpos.database.session()
-        items = session.query(User.display, User).all()
-        return items
+        return session.query(User)
     
     def canDeleteItem(self, item):
         from cbpos.mod.auth.controllers import user
@@ -53,8 +52,7 @@ class RolesFormController(FormController):
     
     def items(self):
         session = cbpos.database.session()
-        items = session.query(Role.display, Role).all()
-        return items
+        return session.query(Role)
     
     def canDeleteItem(self, item):
         from cbpos.mod.auth.controllers import user
@@ -81,8 +79,7 @@ class PermissionsFormController(FormController):
     
     def items(self):
         session = cbpos.database.session()
-        items = session.query(Permission.display, Permission).all()
-        return items
+        return session.query(Permission)
     
     def canDeleteItem(self, item):
         return len(item.roles) == 0

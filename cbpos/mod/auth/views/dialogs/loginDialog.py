@@ -34,9 +34,9 @@ class LoginDialog(QtSvg.QSvgWidget):
     
     def populate(self):
         session = cbpos.database.session()
-        users = session.query(User.display, User).filter_by(hidden=False).all()
+        users = session.query(User).filter_by(hidden=False)
         for user in users:
-            self.loginPanel.editUsername.addItem(*user)
+            self.loginPanel.editUsername.addItem(user.display, user)
 
     def onOkButton(self):
         username = self.loginPanel.getUserName()

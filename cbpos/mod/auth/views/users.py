@@ -78,12 +78,11 @@ class UsersPage(FormPage):
             self.f[field].setChecked(data)
         elif field == 'role':
             session = cbpos.database.session()
-            items = session.query(Role.display, Role).all()
             self.f[field].clear()
             self.f[field].addItem("", None)
-            for i, item in enumerate(items):
-                self.f[field].addItem(*item)
-                if item[1] == data:
+            for i, item in enumerate(session.query(Role)):
+                self.f[field].addItem(item.display, item)
+                if item == data:
                     self.f[field].setCurrentIndex(i+1) 
         elif field == 'permissions':
             self.f[field].clear()
