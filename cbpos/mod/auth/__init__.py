@@ -7,7 +7,7 @@ from cbpos.modules import BaseModuleLoader
 
 class ModuleLoader(BaseModuleLoader):
     dependencies = ('base',)
-    config = [['mod.auth', {'allow_empty_passwords': '1'}]]
+    config = [['mod.auth', {'allow_empty_passwords': True}]]
     name = 'Authentication Support'
 
     def load(self):

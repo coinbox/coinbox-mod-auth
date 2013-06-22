@@ -18,8 +18,9 @@ class UserConfigPage(QtGui.QWidget):
         self.setLayout(form)
 
     def populate(self):
-        self.allow_empty_password.setChecked(cbpos.config['mod.auth', 'allow_empty_passwords'] != '')
+        allow = bool(cbpos.config['mod.auth', 'allow_empty_passwords'])
+        self.allow_empty_password.setChecked(allow)
     
     def update(self):
         checked = self.allow_empty_password.isChecked()
-        cbpos.config['mod.auth', 'allow_empty_passwords'] = '1' if checked else ''
+        cbpos.config['mod.auth', 'allow_empty_passwords'] = checked
