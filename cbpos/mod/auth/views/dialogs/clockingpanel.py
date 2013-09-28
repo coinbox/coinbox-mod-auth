@@ -269,7 +269,12 @@ class ClockingPanel(QtSvg.QSvgWidget):
             self.timeLine.setDirection(QtCore.QTimeLine.Forward)
             self.timeLine.start()
         else:
-            self.setGeometry(QtCore.QRect((self.parent.geometry().width()/2)- self.maxWidth/2, 0, self.maxWidth, self.maxHeight))
+            windowGeom = self.parent.geometry()
+            midPointX = (windowGeom.width()/2)
+            self.setGeometry(QtCore.QRect(
+                midPointX - self.maxWidth/2, 0,
+                self.maxWidth, self.maxHeight
+            ))
             self.show()
 
         #NOTE: Anyone using this class must be aware of THIS, the aboutBox parent must have a disableUi/actions & enableUi/actions Methods.
@@ -278,3 +283,10 @@ class ClockingPanel(QtSvg.QSvgWidget):
 
         self.editUsername.setFocus()
 
+    def reposition(self):
+        windowGeom = self.parent.geometry()
+        midPointX = (windowGeom.width()/2)
+        self.setGeometry(QtCore.QRect(
+            midPointX - self.maxWidth/2, 0,
+            self.maxWidth, self.maxHeight
+        ))

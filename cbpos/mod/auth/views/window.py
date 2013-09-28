@@ -29,9 +29,7 @@ class ClockingMainWindow(MainWindowExtension):
         self.clockingPanel.editUsername.currentIndexChanged.connect(self.clockingPanel.editPassword.setFocus)
         self.clockingPanel.editPassword.returnPressed.connect(self.onDoClocking)
         
-        self.clockingPanel.setIsIn(True)
-        self.clockingPanel.showPanel()
-        self.tabs.setEnabled(False)
+        self.do_show_clockin()
         
         self.__connect_receivers()
 
@@ -64,7 +62,11 @@ class ClockingMainWindow(MainWindowExtension):
         then calls the MainWindow's closeEvent so that it handles the rest.
         """
         self.__disconnect_receivers()
-        return MainWindow.closeEvent(self, event)
+        super(ClockingMainWindow, self).closeEvent(event)
+
+    def resizeEvent(self, event):
+        self.clockingPanel.reposition()
+        super(ClockingMainWindow, self).resizeEvent(event)
 
     def do_logout(self):
         """
@@ -72,8 +74,8 @@ class ClockingMainWindow(MainWindowExtension):
         is received.
         """
         self.close()
-        cbpos.ui.window = dialog =  LoginDialog()
-        dialog.show()
+        dialog =  LoginDialog()
+        cbpos.ui.replace_window(dialog)
 
     def do_show_clockin(self):
         """
@@ -81,7 +83,9 @@ class ClockingMainWindow(MainWindowExtension):
         """
         self.clockingPanel.setIsIn(True)
         self.clockingPanel.showPanel()
+        
         self.tabs.setEnabled(False)
+        self.toolbar.setEnabled(False)
     
     def do_show_clockout(self):
         """
@@ -89,12 +93,16 @@ class ClockingMainWindow(MainWindowExtension):
         """
         self.clockingPanel.setIsIn(False)
         self.clockingPanel.showPanel()
+        
         self.tabs.setEnabled(False)
+        self.toolbar.setEnabled(False)
 
     def onExitButton(self):
         self.clockingPanel.clean()
         self.clockingPanel.hidePanel()
+        
         self.tabs.setEnabled(True)
+        self.toolbar.setEnabled(True)
 
     def onDoClocking(self):
         """

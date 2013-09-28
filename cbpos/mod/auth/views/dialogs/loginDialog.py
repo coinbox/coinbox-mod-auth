@@ -2,6 +2,8 @@ from PySide import QtGui, QtSvg, QtCore
 
 import cbpos
 
+logger = cbpos.get_logger(__name__)
+
 import datetime
 
 from cbpos.mod.auth.controllers import user
@@ -18,7 +20,7 @@ class LoginDialog(QtSvg.QSvgWidget):
         self.setWindowTitle(cbpos.tr.auth._('Login'))
         
         #Login Panel
-        self.showFullScreen() #To center the login widget on screen, and getting space to show it right.
+        #self.showFullScreen() #To center the login widget on screen, and getting space to show it right.
         self.loginPanel = LoginPanel(self, cbpos.res.auth("images/login.svg"))
         self.loginPanel.setSize(350, 350)
         self.loginPanel.setLoginCallback(self.onOkButton)
@@ -84,9 +86,12 @@ class LoginDialog(QtSvg.QSvgWidget):
             self.loginPanel.editPassword.setFocus()
             self.loginPanel.editPassword.selectAll()
 
+    def resizeEvent(self, event):
+        self.loginPanel.reposition()
+
     def closeAll(self):
         self.close()
-        cbpos.ui.show_default()
+        cbpos.ui.show_next()
         #MCH Comment: Why now showing the main ui window first, then login window on top of the main (like a dialog of the main)?
     
     def onExitButton(self):
