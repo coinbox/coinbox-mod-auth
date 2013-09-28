@@ -1,4 +1,6 @@
 from sqlalchemy.orm import exc
+from sqlalchemy.sql import desc, asc
+from sqlalchemy import func
 
 import os, base64, datetime
 
@@ -84,20 +86,32 @@ class UserState(object):
         
         #Look for the last row for the user, which must have an out equal to the in.
         #In most cases, there will be only one row, but in some cases may be more due to someone forgetting the clock out.
-        clockcard = session.query(Clock).filter_by(user=u).filter(Clock.date_time_in==Clock.date_time_out)
-        #in cases where there are more than one, we need to know which to apply the changes.
-        if clockcard.count() > 1:
-            #What to do really? Apply to the last one?
-            clockcard = clockcard.order_by("id DESC").first() #here we find the last one (ordering by id in descending order)
-        else:
-            clockcard = clockcard.order_by("id DESC").first()
-
+        query = session.query(Clock).filter_by(user=u) \
+            .filter(Clock.date_time_in==Clock.date_time_out) \
+            .order_by(desc(Clock.id))
+        
+        # We find the last one (ordering by id in descending order)
         try:
-            clockcard.date_time_out = date_time
+            # Try to find the single one which matches
+            clockcard = query.one()
+        except exc.NoResultFound as e:
+            # If none is found, fail.
+            logger.debug("No corresponding clock in found.")
+            return False
+        except exc.MultipleResultsFound as e:
+            # In cases where there are more than one,
+            # we need to know which to apply the changes.
+            # TODO: What to do really? Apply to the last one?
+            logger.debug("Multiple corresponding clock-ins found, taking the first one.")
+            clockcard = query.first()
+
+        # Update the record with current time
+        clockcard.date_time_out = func.now()
+        try:
             session.commit()
-        except Exception as e:
+        except:
             session.rollback()
-            logger.debug("Error on saving clock out for user %s. Error is: %s"%(u, e))
+            logger.exception("Error on saving clock out for user %s", u)
             return False
         else:
             return True
