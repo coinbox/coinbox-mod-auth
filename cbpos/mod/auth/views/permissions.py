@@ -51,7 +51,7 @@ class PermissionsPage(FormPage):
                     child = QtGui.QTreeWidgetItem(root, [i.label])
                     try:
                         mr = session.query(MenuRestriction).filter_by(root=item.name, item=i.name).one()
-                    except exc.NoResultFound, exc.MultipleResultsFound:
+                    except (exc.NoResultFound, exc.MultipleResultsFound) as e:
                         mr = MenuRestriction(root=item.name, item=i.name)
                     child.setData(0, QtCore.Qt.UserRole+1, mr)
                     if (item.name, i.name) in restrictions:

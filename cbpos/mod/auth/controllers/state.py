@@ -26,7 +26,7 @@ class UserState(object):
         session = cbpos.database.session()
         try:
             u = session.query(User).filter(User.username == username).one()
-        except exc.NoResultFound, exc.MultipleResultsFound:
+        except (exc.NoResultFound, exc.MultipleResultsFound) as e:
             return None
         else:
             return u if u.login(password) else None
