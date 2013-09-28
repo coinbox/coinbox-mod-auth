@@ -113,7 +113,7 @@ class ModuleLoader(BaseModuleLoader):
     def do_post_init(self):
         # Extend the main window, for the clocking feature
         from cbpos.mod.auth.views import ClockingMainWindow
-        cbpos.ui.extend_default(ClockingMainWindow)
+        cbpos.ui.extend_default_main_window(ClockingMainWindow)
         
         # Load the login dialog before anything else
         from PySide import QtGui
@@ -125,7 +125,7 @@ class ModuleLoader(BaseModuleLoader):
         user_count = session.query(User).count()
         if user_count > 0:
             login = LoginDialog()
-            cbpos.ui.window = login
+            cbpos.ui.chain_window(login, cbpos.ui.PRIORITY_LAST_HIGH)
             return True
         else:
             user.current = User(username='_superuser_', password='_superuser_', hidden=True, super=True)
