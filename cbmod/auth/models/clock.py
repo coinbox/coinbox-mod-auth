@@ -1,7 +1,7 @@
 import cbpos
 
-import cbpos.mod.base.models.common as common
-from cbpos.mod.auth.models import User
+import cbmod.base.models.common as common
+from cbmod.auth.models import User
 
 from sqlalchemy import func, Table, Column, Integer, String, Float, Boolean, MetaData, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, backref

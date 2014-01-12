@@ -7,11 +7,11 @@ from cbpos.modules import BaseModuleLoader
 
 class ModuleLoader(BaseModuleLoader):
     def load_models(self):
-        from cbpos.mod.auth.models import Permission, MenuRestriction, Role, User
+        from cbmod.auth.models import Permission, MenuRestriction, Role, User
         return [Permission, MenuRestriction, Role, User]
 
     def test_models(self):
-        from cbpos.mod.auth.models import Permission, MenuRestriction, Role, User
+        from cbmod.auth.models import Permission, MenuRestriction, Role, User
     
         mr = lambda root, item: MenuRestriction(root=root, item=item)
     
@@ -48,7 +48,7 @@ class ModuleLoader(BaseModuleLoader):
 
     def menu(self):
         from cbpos.interface import MenuRoot, MenuItem
-        from cbpos.mod.auth.views import UsersPage, RolesPage, PermissionsPage, IndividualUserPage
+        from cbmod.auth.views import UsersPage, RolesPage, PermissionsPage, IndividualUserPage
         
         return [[MenuRoot('users',
                           label=cbpos.tr.auth._('Users'),
@@ -112,14 +112,14 @@ class ModuleLoader(BaseModuleLoader):
 
     def do_post_init(self):
         # Extend the main window, for the clocking feature
-        from cbpos.mod.auth.views import ClockingMainWindow
+        from cbmod.auth.views import ClockingMainWindow
         cbpos.ui.extend_default_main_window(ClockingMainWindow)
         
         # Load the login dialog before anything else
         from PySide import QtGui
-        from cbpos.mod.auth.views.dialogs import LoginDialog
-        from cbpos.mod.auth.controllers import user
-        from cbpos.mod.auth.models import User
+        from cbmod.auth.views.dialogs import LoginDialog
+        from cbmod.auth.controllers import user
+        from cbmod.auth.models import User
         
         session = cbpos.database.session()
         user_count = session.query(User).count()
@@ -140,5 +140,5 @@ Password: _superuser_
             return True
 
     def config_panels(self):
-        from cbpos.mod.auth.views import UserConfigPage 
+        from cbmod.auth.views import UserConfigPage 
         return [UserConfigPage]

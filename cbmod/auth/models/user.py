@@ -1,8 +1,8 @@
 import cbpos
 
-import cbpos.mod.base.models.common as common
+import cbmod.base.models.common as common
 
-from cbpos.mod.auth.models import Role, Permission, MenuRestriction, \
+from cbmod.auth.models import Role, Permission, MenuRestriction, \
         role_permission_link, permission_restriction_link
 
 from sqlalchemy import func, Table, Column, Integer, String, Float, Boolean, MetaData, ForeignKey

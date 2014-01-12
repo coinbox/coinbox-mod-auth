@@ -4,10 +4,10 @@ from sqlalchemy.orm import exc
 
 import cbpos
 
-from cbpos.mod.auth.controllers import PermissionsFormController
-from cbpos.mod.auth.models import Permission, MenuRestriction
+from cbmod.auth.controllers import PermissionsFormController
+from cbmod.auth.models import Permission, MenuRestriction
 
-from cbpos.mod.base.views import FormPage
+from cbmod.base.views import FormPage
 
 class PermissionsPage(FormPage):
     controller = PermissionsFormController()

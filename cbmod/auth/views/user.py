@@ -2,11 +2,11 @@ from PySide import QtCore, QtGui
 
 import cbpos
 
-from cbpos.mod.auth.controllers import IndividualUserFormController
-from cbpos.mod.auth.models import User, Role
+from cbmod.auth.controllers import IndividualUserFormController
+from cbmod.auth.models import User, Role
 
-from cbpos.mod.base.controllers import ValidationError
-from cbpos.mod.base.views import FormPage
+from cbmod.base.controllers import ValidationError
+from cbmod.base.views import FormPage
 
 class IndividualUserPage(FormPage):
     controller = IndividualUserFormController()

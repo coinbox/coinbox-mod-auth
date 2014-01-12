@@ -6,10 +6,10 @@ logger = cbpos.get_logger(__name__)
 
 import datetime
 
-from cbpos.mod.auth.controllers import user
-from cbpos.mod.auth.models import User
+from cbmod.auth.controllers import user
+from cbmod.auth.models import User
 
-from cbpos.mod.auth.views.dialogs.loginpanel import LoginPanel
+from cbmod.auth.views.dialogs.loginpanel import LoginPanel
 
 from pydispatch import dispatcher
 
