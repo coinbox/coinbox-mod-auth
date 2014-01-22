@@ -6,11 +6,11 @@ import datetime
 import cbpos
 logger = cbpos.get_logger(__name__)
 
-from cbpos.mod.auth.views.dialogs.clockingpanel import ClockingPanel
-from cbpos.mod.auth.views.dialogs import LoginDialog
-from cbpos.mod.auth.controllers import user
-from cbpos.mod.base.ui import MainWindowExtension
-from cbpos.mod.base.views import MainWindow
+from cbmod.auth.views.dialogs.clockingpanel import ClockingPanel
+from cbmod.auth.views.dialogs import LoginDialog
+from cbmod.auth.controllers import user
+from cbmod.base.ui import MainWindowExtension
+from cbmod.base.views import MainWindow
 
 class ClockingMainWindow(MainWindowExtension):
     """

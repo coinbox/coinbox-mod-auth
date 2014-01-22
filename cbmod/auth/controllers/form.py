@@ -1,8 +1,8 @@
 import cbpos
 
-from cbpos.mod.auth.models import User, Role, Permission
+from cbmod.auth.models import User, Role, Permission
 
-from cbpos.mod.base.controllers import FormController
+from cbmod.base.controllers import FormController
 
 class UsersFormController(FormController):
     cls = User
@@ -22,11 +22,11 @@ class UsersFormController(FormController):
         return session.query(User)
     
     def canDeleteItem(self, item):
-        from cbpos.mod.auth.controllers import user
+        from cbmod.auth.controllers import user
         return user.current != item
     
     def canEditItem(self, item):
-        from cbpos.mod.auth.controllers import user
+        from cbmod.auth.controllers import user
         return user.current != item
     
     def canAddItem(self):
@@ -55,11 +55,11 @@ class RolesFormController(FormController):
         return session.query(Role)
     
     def canDeleteItem(self, item):
-        from cbpos.mod.auth.controllers import user
+        from cbmod.auth.controllers import user
         return user.current.role != item
     
     def canEditItem(self, item):
-        from cbpos.mod.auth.controllers import user
+        from cbmod.auth.controllers import user
         return user.current.role != item
     
     def canAddItem(self):
@@ -106,7 +106,7 @@ class IndividualUserFormController(FormController):
                 }
     
     def item(self):
-        from cbpos.mod.auth.controllers import user
+        from cbmod.auth.controllers import user
         return user.current
     
     def items(self):

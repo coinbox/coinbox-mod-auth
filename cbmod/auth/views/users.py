@@ -2,10 +2,10 @@ from PySide import QtGui
 
 import cbpos
 
-from cbpos.mod.auth.controllers import UsersFormController
-from cbpos.mod.auth.models import User, Role
+from cbmod.auth.controllers import UsersFormController
+from cbmod.auth.models import User, Role
 
-from cbpos.mod.base.views import FormPage
+from cbmod.base.views import FormPage
 
 class UsersPage(FormPage):
     controller = UsersFormController()

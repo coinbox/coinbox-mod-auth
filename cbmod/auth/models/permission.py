@@ -1,6 +1,6 @@
 import cbpos
 
-import cbpos.mod.base.models.common as common
+import cbmod.base.models.common as common
 
 from sqlalchemy import func, Table, Column, Integer, String, Float, Boolean, MetaData, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, backref

@@ -7,7 +7,7 @@ import os, base64, datetime
 import cbpos
 logger = cbpos.get_logger(__name__)
 
-from cbpos.mod.auth.models import User, Clock
+from cbmod.auth.models import User, Clock
 
 class UserState(object):
     __logged_in_user = None
@@ -61,7 +61,7 @@ class UserState(object):
         return self.current is not None
     
     def clockin(self, u=None):
-        from cbpos.mod.auth.controllers import user
+        from cbmod.auth.controllers import user
 
         session = cbpos.database.session()
 
@@ -76,7 +76,7 @@ class UserState(object):
         return True
     
     def clockout(self, u=None):
-        from cbpos.mod.auth.controllers import user
+        from cbmod.auth.controllers import user
 
         session = cbpos.database.session()
 
