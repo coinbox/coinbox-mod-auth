@@ -112,16 +112,16 @@ class LoginPanel(QtSvg.QSvgWidget):
 
         self.editPassword.setEchoMode(QtGui.QLineEdit.Password)
         #Enter texts
-        self.lblUsername.setText("<b><i>" + cbpos.tr.auth._("Username:") + "</i></b>")
-        self.lblPassword.setText("<b><i>" + cbpos.tr.auth._("Password:") + "</i></b>")
+        self.lblUsername.setText("<b><i>" + cbpos.tr.auth_("Username:") + "</i></b>")
+        self.lblPassword.setText("<b><i>" + cbpos.tr.auth_("Password:") + "</i></b>")
         self.lblUsername.setStyleSheet("color:white")
         self.lblPassword.setStyleSheet("color:white")
         self.lblError.setStyleSheet("color:white")
-        self.editPassword.setPlaceholderText(cbpos.tr.auth._("Enter your password"))
-        self.btnExit.setText(cbpos.tr.auth._("Exit"))
-        self.btnLogin.setText(cbpos.tr.auth._("Log in"))
-        self.btnLoginNClockin.setText(cbpos.tr.auth._("Login && Clockin"))
-        self.btnClockin.setText(cbpos.tr.auth._("Clock in"))
+        self.editPassword.setPlaceholderText(cbpos.tr.auth_("Enter your password"))
+        self.btnExit.setText(cbpos.tr.auth_("Exit"))
+        self.btnLogin.setText(cbpos.tr.auth_("Log in"))
+        self.btnLoginNClockin.setText(cbpos.tr.auth_("Login && Clockin"))
+        self.btnClockin.setText(cbpos.tr.auth_("Clock in"))
         
         #setting member properties
         self.parent = parent

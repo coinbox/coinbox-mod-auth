@@ -8,13 +8,13 @@ class UsersFormController(FormController):
     cls = User
     
     def fields(self):
-        return {"username": (cbpos.tr.auth._("Username"), ""),
-                "role": (cbpos.tr.auth._("Role"), None),
-                "permissions": (cbpos.tr.auth._("Permissions"), []),
-                "hidden": (cbpos.tr.auth._("Show in Login Box"), False),
+        return {"username": (cbpos.tr.auth_("Username"), ""),
+                "role": (cbpos.tr.auth_("Role"), None),
+                "permissions": (cbpos.tr.auth_("Permissions"), []),
+                "hidden": (cbpos.tr.auth_("Show in Login Box"), False),
                 "password_check": ("", False),
-                "password1": (cbpos.tr.auth._("Password"), ""),
-                "password2": (cbpos.tr.auth._("Confirm Password"), "")
+                "password1": (cbpos.tr.auth_("Password"), ""),
+                "password2": (cbpos.tr.auth_("Confirm Password"), "")
                 }
     
     def items(self):
@@ -46,8 +46,8 @@ class RolesFormController(FormController):
     cls = Role
     
     def fields(self):
-        return {"name": (cbpos.tr.auth._("Name"), ""),
-                "permissions": (cbpos.tr.auth._("Permissions"), []),
+        return {"name": (cbpos.tr.auth_("Name"), ""),
+                "permissions": (cbpos.tr.auth_("Permissions"), []),
                 }
     
     def items(self):
@@ -72,9 +72,9 @@ class PermissionsFormController(FormController):
     cls = Permission
     
     def fields(self):
-        return {"name": (cbpos.tr.auth._("Name"), ""),
-                "description": (cbpos.tr.auth._("Description"), ""),
-                "menu_restrictions": (cbpos.tr.auth._("Menu Restrictions"), []),
+        return {"name": (cbpos.tr.auth_("Name"), ""),
+                "description": (cbpos.tr.auth_("Description"), ""),
+                "menu_restrictions": (cbpos.tr.auth_("Menu Restrictions"), []),
                 }
     
     def items(self):
@@ -98,11 +98,11 @@ class IndividualUserFormController(FormController):
     single = True
     
     def fields(self):
-        return {"username": (cbpos.tr.auth._("Username"), ""),
-                "role": (cbpos.tr.auth._("Role"), None),
+        return {"username": (cbpos.tr.auth_("Username"), ""),
+                "role": (cbpos.tr.auth_("Role"), None),
                 "password_check": ("", False),
-                "password1": (cbpos.tr.auth._("Password"), ""),
-                "password2": (cbpos.tr.auth._("Confirm Password"), "")
+                "password1": (cbpos.tr.auth_("Password"), ""),
+                "password2": (cbpos.tr.auth_("Confirm Password"), "")
                 }
     
     def item(self):

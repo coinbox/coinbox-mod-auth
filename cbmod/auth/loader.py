@@ -51,28 +51,28 @@ class ModuleLoader(BaseModuleLoader):
         from cbmod.auth.views import UsersPage, RolesPage, PermissionsPage, IndividualUserPage
         
         return [[MenuRoot('users',
-                          label=cbpos.tr.auth._('Users'),
+                          label=cbpos.tr.auth_('Users'),
                           icon=cbpos.res.auth('images/menu-root-users.png'),
                           rel=-2,
                           priority=3
                           )],
                 [MenuItem('users', parent='users',
-                          label=cbpos.tr.auth._('Users'),
+                          label=cbpos.tr.auth_('Users'),
                           icon=cbpos.res.auth('images/menu-users.png'),
                           page=UsersPage
                           ),
                  MenuItem('roles', parent='users',
-                          label=cbpos.tr.auth._('Roles'),
+                          label=cbpos.tr.auth_('Roles'),
                           icon=cbpos.res.auth('images/menu-roles.png'),
                           page=RolesPage
                           ),
                  MenuItem('permissions', parent='users',
-                          label=cbpos.tr.auth._('Permissions'),
+                          label=cbpos.tr.auth_('Permissions'),
                           icon=cbpos.res.auth('images/menu-permissions.png'),
                           page=PermissionsPage
                           ),
                  MenuItem('indivdual-user', parent='administration',
-                          label=cbpos.tr.auth._('User'),
+                          label=cbpos.tr.auth_('User'),
                           icon=cbpos.res.auth('images/menu-user.png'),
                           page=IndividualUserPage
                           )
@@ -86,19 +86,19 @@ class ModuleLoader(BaseModuleLoader):
         """
         from cbpos.interface import Action
         return [Action('logout',
-                       label=cbpos.tr.auth._('Logout'),
+                       label=cbpos.tr.auth_('Logout'),
                        icon=cbpos.res.auth('images/menu-user.png'),
                        shortcut='Ctrl+L',
                        signal='action-logout'
                        ),
                 Action('clockin',
-                       label=cbpos.tr.auth._('Clock-in'),
+                       label=cbpos.tr.auth_('Clock-in'),
                        icon=cbpos.res.auth('images/clock_in.png'),
                        shortcut='Ctrl+I',
                        signal='action-clockin'
                        ),
                 Action('clockout',
-                       label=cbpos.tr.auth._('Clock-out'),
+                       label=cbpos.tr.auth_('Clock-out'),
                        icon=cbpos.res.auth('images/clock_out.png'),
                        shortcut='Ctrl+O',
                        signal='action-clockout'

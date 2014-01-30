@@ -95,12 +95,12 @@ class ClockingPanel(QtSvg.QSvgWidget):
 
         self.editPassword.setEchoMode(QtGui.QLineEdit.Password)
         #Enter texts
-        self.lblUsername.setText("<b><i>" + cbpos.tr.auth._("Username:") + "</i></b>")
-        self.lblPassword.setText("<b><i>" + cbpos.tr.auth._("Password:") + "</i></b>")
+        self.lblUsername.setText("<b><i>" + cbpos.tr.auth_("Username:") + "</i></b>")
+        self.lblPassword.setText("<b><i>" + cbpos.tr.auth_("Password:") + "</i></b>")
         self.lblUsername.setStyleSheet("color:white")
         self.lblPassword.setStyleSheet("color:white")
-        self.editPassword.setPlaceholderText(cbpos.tr.auth._("Enter your password"))
-        self.btnExit.setText(cbpos.tr.auth._("Cancel"))
+        self.editPassword.setPlaceholderText(cbpos.tr.auth_("Enter your password"))
+        self.btnExit.setText(cbpos.tr.auth_("Cancel"))
         self.btnLogin.setText("")
         
         #setting member properties
@@ -140,9 +140,9 @@ class ClockingPanel(QtSvg.QSvgWidget):
     def setIsIn(self, val):
         self._isIn = val
         if val:
-            self.btnLogin.setText(cbpos.tr.auth._("Clock in"))
+            self.btnLogin.setText(cbpos.tr.auth_("Clock in"))
         else:
-            self.btnLogin.setText(cbpos.tr.auth._("Clock out"))
+            self.btnLogin.setText(cbpos.tr.auth_("Clock out"))
 
     def isIn(self):
         return self._isIn

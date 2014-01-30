@@ -17,7 +17,7 @@ class LoginDialog(QtSvg.QSvgWidget):
     def __init__(self):
         super(LoginDialog, self).__init__()
         self.load(cbpos.res.auth("images/login-background2.svg"))
-        self.setWindowTitle(cbpos.tr.auth._('Login'))
+        self.setWindowTitle(cbpos.tr.auth_('Login'))
         
         #Login Panel
         #self.showFullScreen() #To center the login widget on screen, and getting space to show it right.
@@ -48,7 +48,7 @@ class LoginDialog(QtSvg.QSvgWidget):
             self.loginPanel.hidePanel()
             QtCore.QTimer.singleShot(1000, self.closeAll)
         else:
-            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.') )
+            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth_('Invalid username or password.') )
             self.loginPanel.editPassword.setFocus()
             self.loginPanel.editPassword.selectAll()
 
@@ -60,13 +60,13 @@ class LoginDialog(QtSvg.QSvgWidget):
         if u:
             if user.clockin(u):
                 date_time = datetime.datetime.now()
-                ok_msg = cbpos.tr.auth._('Clock in sucessful.\nYour in time is %s'%date_time)
+                ok_msg = cbpos.tr.auth_('Clock in sucessful.\nYour in time is %s'%date_time)
                 self.loginPanel.setMessage(ok_msg)
             else:
-                ok_msg = cbpos.tr.auth._('Clock in UNSUCCESSFUL')
+                ok_msg = cbpos.tr.auth_('Clock in UNSUCCESSFUL')
                 self.loginPanel.setError(ok_msg)
         else:
-            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.') )
+            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth_('Invalid username or password.') )
             self.loginPanel.editPassword.setFocus()
             self.loginPanel.editPassword.selectAll()
 
@@ -79,10 +79,10 @@ class LoginDialog(QtSvg.QSvgWidget):
                 self.loginPanel.hidePanel()
                 QtCore.QTimer.singleShot(1000, self.closeAll)
             else:
-                ok_msg = cbpos.tr.auth._('Clock in UNSUCCESSFUL')
+                ok_msg = cbpos.tr.auth_('Clock in UNSUCCESSFUL')
                 self.loginPanel.setError(ok_msg)
         else:
-            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.') )
+            self.loginPanel.setError('<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth_('Invalid username or password.') )
             self.loginPanel.editPassword.setFocus()
             self.loginPanel.editPassword.selectAll()
 

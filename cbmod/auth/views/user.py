@@ -52,7 +52,7 @@ class IndividualUserPage(FormPage):
                 password1 = self.f['password1'].text()
                 password2 = self.f['password2'].text()
                 if password1 != password2:
-                    raise ValidationError(cbpos.tr.auth._("Passwords do not match."))
+                    raise ValidationError(cbpos.tr.auth_("Passwords do not match."))
                 data = password1
                 field = 'password'
             else:

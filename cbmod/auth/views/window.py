@@ -115,7 +115,7 @@ class ClockingMainWindow(MainWindowExtension):
         u = user.check(username, password)
         
         if not u:
-            message = '<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth._('Invalid username or password.')
+            message = '<html><head/><body><p><span style=" font-size:14pt; font-weight:600; font-style:italic; color:#ff0856;">%s</span></p></body></html>'%cbpos.tr.auth_('Invalid username or password.')
             self.showAuthErrorMessage(message)
             return
         
@@ -124,17 +124,17 @@ class ClockingMainWindow(MainWindowExtension):
         
         if is_in:
             if user.clockin(u):
-                message = cbpos.tr.auth._('Clock in sucessful.\nYour in time is %s'%date_time)
+                message = cbpos.tr.auth_('Clock in sucessful.\nYour in time is %s'%date_time)
                 self.showDoneMessage(message)
             else:
-                message = cbpos.tr.auth._('Clock in UNSUCCESSFUL')
+                message = cbpos.tr.auth_('Clock in UNSUCCESSFUL')
                 self.showErrorMessage(message)
         else:
             if user.clockout(u):
-                message = cbpos.tr.auth._('Clock out sucessful.\nYour out time is %s'%date_time)
+                message = cbpos.tr.auth_('Clock out sucessful.\nYour out time is %s'%date_time)
                 self.showDoneMessage(message)
             else:
-                message = cbpos.tr.auth._('Clock out UNSUCESSFUL')
+                message = cbpos.tr.auth_('Clock out UNSUCESSFUL')
                 self.showErrorMessage(message)
 
     def showAuthErrorMessage(self, msg):
