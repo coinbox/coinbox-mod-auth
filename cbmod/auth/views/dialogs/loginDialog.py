@@ -97,4 +97,4 @@ class LoginDialog(QtSvg.QSvgWidget):
     def onExitButton(self):
         user.current = None
         self.close()
-        cbpos.terminate()
+        cbpos.loader.terminate()
