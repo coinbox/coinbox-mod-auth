@@ -29,16 +29,21 @@ class LoginDialog(QtSvg.QSvgWidget):
         self.loginPanel.editUsername.currentIndexChanged.connect(self.loginPanel.editPassword.setFocus)
         self.loginPanel.editPassword.returnPressed.connect(self.onOkButton)
         self.loginPanel.btnExit.clicked.connect(self.onExitButton)
-        #Populate users
-        self.populate()
-        #Launch login-panel
-        QtCore.QTimer.singleShot(300, self.loginPanel.showPanel )
     
     def populate(self):
         session = cbpos.database.session()
         users = session.query(User).filter_by(hidden=False)
         for user in users:
             self.loginPanel.editUsername.addItem(user.display, user)
+
+    __first_show = True
+    def showEvent(self, event):
+        if self.__first_show:
+            self.loginPanel.showPanel()
+            self.populate()
+            self.__first_show = False
+        else:
+            self.loginPanel.reposition()
 
     def onOkButton(self):
         username = self.loginPanel.getUserName()
@@ -92,6 +97,9 @@ class LoginDialog(QtSvg.QSvgWidget):
     def closeAll(self):
         self.close()
         cbpos.ui.show_next()
+        # Using another timer looks nicer because there iss no
+        # delay between one closing and the other showing
+        #QtCore.QTimer.singleShot(1000, self.close)
         #MCH Comment: Why now showing the main ui window first, then login window on top of the main (like a dialog of the main)?
     
     def onExitButton(self):
