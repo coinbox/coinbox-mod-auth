@@ -107,7 +107,6 @@ class ModuleLoader(BaseModuleLoader):
 
     def init(self):
         dispatcher.connect(self.do_post_init, signal='ui-post-init', sender='app')
-        
         return True
 
     def do_post_init(self):
@@ -118,26 +117,10 @@ class ModuleLoader(BaseModuleLoader):
         # Load the login dialog before anything else
         from PySide import QtGui
         from cbmod.auth.views.dialogs import LoginDialog
-        from cbmod.auth.controllers import user
-        from cbmod.auth.models import User
         
-        session = cbpos.database.session()
-        user_count = session.query(User).count()
-        if user_count > 0:
-            login = LoginDialog()
-            cbpos.ui.chain_window(login, cbpos.ui.PRIORITY_LAST_HIGH)
-            return True
-        else:
-            user.current = User(username='_superuser_', password='_superuser_', hidden=True, super=True)
-            session.add(user.current)
-            session.commit()
-            message = '''No user found. Creating Super User.
-Create a normal user as soon as possible.
-Username: _superuser_
-Password: _superuser_
-'''
-            QtGui.QMessageBox.information(QtGui.QWidget(), 'Login', message, QtGui.QMessageBox.Ok)
-            return True
+        login = LoginDialog()
+        cbpos.ui.chain_window(login, cbpos.ui.PRIORITY_FIRST_HIGH)
+        return True
 
     def config_panels(self):
         from cbmod.auth.views import UserConfigPage 
