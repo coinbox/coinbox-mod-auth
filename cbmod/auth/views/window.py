@@ -47,23 +47,6 @@ class ClockingMainWindow(MainWindowExtension):
         dispatcher.connect(self.do_show_clockout, signal='action-clockout', sender='action')
         dispatcher.connect(self.do_logout, signal='action-logout', sender='action')
 
-    def __disconnect_receivers(self):
-        """
-        Disconnect the receivers of the actions, so that they no longer get
-        called when the window is re-created.
-        """
-        dispatcher.disconnect(self.do_show_clockin, signal='action-clockin', sender='action')
-        dispatcher.disconnect(self.do_show_clockout, signal='action-clockout', sender='action')
-        dispatcher.disconnect(self.do_logout, signal='action-logout', sender='action')
-
-    def closeEvent(self, event):
-        """
-        Overrides the MainWindow closeEvent to disconnect the receivers,
-        then calls the MainWindow's closeEvent so that it handles the rest.
-        """
-        self.__disconnect_receivers()
-        super(ClockingMainWindow, self).closeEvent(event)
-
     def resizeEvent(self, event):
         self.clockingPanel.reposition()
         super(ClockingMainWindow, self).resizeEvent(event)
@@ -74,7 +57,7 @@ class ClockingMainWindow(MainWindowExtension):
         is received.
         """
         self.close()
-        dialog =  LoginDialog()
+        dialog = LoginDialog()
         cbpos.ui.replace_window(dialog)
 
     def do_show_clockin(self):
